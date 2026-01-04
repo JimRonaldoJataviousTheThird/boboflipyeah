@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Venezuelan Israel Wallet Tracker</title>
+  <title>Crypto Wallet Tracker</title>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Playfair+Display:wght@400;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -151,6 +151,100 @@
     .spinner { width: 16px; height: 16px; border: 2px solid #4a1515; border-top-color: #ff6666; border-radius: 50%; animation: spin 1s linear infinite; }
     .wallet-error { color: #ff7777; font-size: 18px; font-family: 'VT323', monospace; }
 
+    /* Withdrawals Section */
+    .withdrawals-container {
+      background: linear-gradient(135deg, #251010 0%, #1a0808 100%);
+      border: 1px solid #5a2020;
+      padding: 16px;
+    }
+
+    .withdrawal-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #3d1515;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .withdrawal-item:last-child {
+      border-bottom: none;
+    }
+
+    .withdrawal-item:hover {
+      background: rgba(255, 102, 102, 0.05);
+    }
+
+    .withdrawal-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .withdrawal-coin-badge {
+      font-family: 'VT323', monospace;
+      font-size: 16px;
+      padding: 4px 10px;
+      background: #4a1515;
+      border: 1px solid #6b2222;
+      color: #ffaaaa;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .withdrawal-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .withdrawal-amount {
+      font-family: 'VT323', monospace;
+      font-size: 1.3rem;
+      color: #ff7777;
+    }
+
+    .withdrawal-to {
+      font-family: 'VT323', monospace;
+      font-size: 12px;
+      color: #aa8888;
+    }
+
+    .withdrawal-right {
+      text-align: right;
+    }
+
+    .withdrawal-date {
+      font-family: 'VT323', monospace;
+      font-size: 14px;
+      color: #cc9999;
+      white-space: nowrap;
+    }
+
+    .withdrawal-txid {
+      font-family: 'VT323', monospace;
+      font-size: 11px;
+      color: #886666;
+    }
+
+    .withdrawal-txid a {
+      color: #aa7777;
+      text-decoration: none;
+    }
+
+    .withdrawal-txid a:hover {
+      color: #ffaaaa;
+    }
+
+    .no-withdrawals {
+      text-align: center;
+      padding: 20px;
+      color: #aa8888;
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+    }
+
     .chart-container { margin-top: 20px; padding: 16px; background: rgba(26, 8, 8, 0.8); border: 1px solid #3d1515; border-radius: 4px; }
     .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; }
     .chart-title { color: #ffaaaa; font-family: 'VT323', monospace; font-size: 18px; text-transform: uppercase; letter-spacing: 2px; }
@@ -186,8 +280,8 @@
   <div class="container">
     <header>
       <div class="ornament">◆ ◇ ◆ ◇ ◆</div>
-      <h1>Venezuelan Israel Wallet Tracker</h1>
-      <p class="subtitle">~ Goy Slop Crypto Monitor ~</p>
+      <h1>Wallet Tracker</h1>
+      <p class="subtitle">~ Cryptocurrency Portfolio Monitor ~</p>
     </header>
 
     <div class="total-card">
@@ -214,6 +308,14 @@
 
     <h2 class="section-title">◈ Crypto Wallets ◈</h2>
     <div class="wallets" id="wallets"></div>
+
+    <h2 class="section-title">◈ Recent Withdrawals ◈</h2>
+    <div class="withdrawals-container" id="withdrawals">
+      <div class="loading-spinner" style="justify-content: center; padding: 20px;">
+        <div class="spinner"></div>
+        <span>Loading withdrawals...</span>
+      </div>
+    </div>
 
     <h2 class="section-title">◈ QUAI Exchange Wallets ◈</h2>
     <div class="wallets" id="quai-wallets"></div>
@@ -250,6 +352,31 @@
     };
 
     let balances = {}, prices = {}, quaiBalances = {}, quaiCharts = {}, quaiHistoryData = {}, selectedTimeRange = {};
+
+    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache
+
+    function getCachedHistory(exchange, days) {
+      try {
+        const cached = localStorage.getItem(`quai_history_${exchange}_${days}`);
+        if (cached) {
+          const { data, timestamp } = JSON.parse(cached);
+          if (Date.now() - timestamp < CACHE_DURATION) {
+            console.log(`Using cached ${days}D data for ${exchange}`);
+            return data;
+          }
+        }
+      } catch (e) { console.error('Cache read error:', e); }
+      return null;
+    }
+
+    function setCachedHistory(exchange, days, data) {
+      try {
+        localStorage.setItem(`quai_history_${exchange}_${days}`, JSON.stringify({
+          data: data,
+          timestamp: Date.now()
+        }));
+      } catch (e) { console.error('Cache write error:', e); }
+    }
 
     function renderWallets() {
       document.getElementById('wallets').innerHTML = wallets.map((wallet, index) => `
@@ -315,6 +442,14 @@
         btn.classList.toggle('active', parseInt(btn.dataset.days) === days);
       });
       
+      // Check cache first
+      const cachedHistory = getCachedHistory(exchange, days);
+      if (cachedHistory) {
+        quaiHistoryData[exchange] = cachedHistory;
+        createChart(exchange, cachedHistory, days);
+        return;
+      }
+      
       // Need to refetch data for new time range
       const wallet = quaiWallets.find(w => w.exchange === exchange);
       if (wallet) {
@@ -328,6 +463,7 @@
         
         const history = await fetchQuaiBalanceHistory(wallet.address, days);
         quaiHistoryData[exchange] = history;
+        setCachedHistory(exchange, days, history);
         createChart(exchange, history, days);
       }
     }
@@ -367,6 +503,249 @@
     async function fetchDOGE(address) {
       const data = await (await fetch(`https://api.blockcypher.com/v1/doge/main/addrs/${address}/balance`)).json();
       return { balance: data.balance / 1e8, source: 'BlockCypher' };
+    }
+
+    // Withdrawal tracking functions
+    async function fetchRVNWithdrawals(address) {
+      try {
+        // Use Blockchair API for RVN
+        const url = `https://api.blockchair.com/ravencoin/dashboards/address/${address}?limit=10,0`;
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          console.log('RVN Blockchair API response not ok:', response.status);
+          return [];
+        }
+        
+        const data = await response.json();
+        console.log('RVN Blockchair data:', data);
+        
+        if (!data || !data.data || !data.data[address]) return [];
+        
+        const addrData = data.data[address];
+        const txHashes = addrData.transactions || [];
+        
+        if (txHashes.length === 0) return [];
+        
+        // Fetch individual transactions (Blockchair allows batching)
+        const withdrawals = [];
+        const batchHashes = txHashes.slice(0, 5).join(',');
+        
+        const txUrl = `https://api.blockchair.com/ravencoin/dashboards/transactions/${batchHashes}`;
+        const txResponse = await fetch(txUrl);
+        const txData = await txResponse.json();
+        
+        console.log('RVN tx details:', txData);
+        
+        if (txData && txData.data) {
+          for (const [hash, tx] of Object.entries(txData.data)) {
+            // Check if our address is in inputs (withdrawal)
+            const isInput = tx.inputs?.some(inp => inp.recipient === address);
+            
+            if (isInput) {
+              // Sum outputs to other addresses
+              const sentAmount = tx.outputs
+                ?.filter(out => out.recipient !== address)
+                .reduce((sum, out) => sum + (out.value || 0), 0) || 0;
+              
+              if (sentAmount > 0) {
+                withdrawals.push({
+                  coin: 'RVN',
+                  amount: sentAmount / 1e8,
+                  date: new Date(tx.transaction.time),
+                  txid: hash,
+                  explorer: `https://blockchair.com/ravencoin/transaction/${hash}`
+                });
+              }
+            }
+          }
+        }
+        
+        return withdrawals;
+      } catch (err) { console.error('RVN withdrawals error:', err); return []; }
+    }
+
+    async function fetchBCHWithdrawals(address) {
+      try {
+        const fullAddress = `bitcoincash:${address}`;
+        // Get transaction history from FullStack
+        const url = `${CORS_PROXY}${encodeURIComponent(`https://bchn.fullstack.cash/v5/electrumx/transactions/${fullAddress}`)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        console.log('BCH tx list:', data);
+        
+        if (!data || !data.transactions) return [];
+        
+        const withdrawals = [];
+        // Get details for recent transactions
+        for (const tx of data.transactions.slice(0, 10)) {
+          try {
+            const txUrl = `${CORS_PROXY}${encodeURIComponent(`https://bchn.fullstack.cash/v5/electrumx/tx/data/${tx.tx_hash}`)}`;
+            const txResponse = await fetch(txUrl);
+            const txResult = await txResponse.json();
+            
+            // Data is nested in 'details' object
+            const txData = txResult.details || txResult;
+            
+            // Log first vin to see structure
+            if (txData.vin && txData.vin[0]) {
+              console.log('BCH vin[0] full:', JSON.stringify(txData.vin[0]));
+            }
+            
+            if (txData && txData.vout) {
+              // Check if our address appears in any output (receiving)
+              const receivedAmount = txData.vout
+                .filter(vout => {
+                  const addrs = vout.scriptPubKey?.addresses || [];
+                  return addrs.some(a => a.includes(address));
+                })
+                .reduce((sum, vout) => sum + (parseFloat(vout.value) || 0), 0);
+              
+              // Check total output value
+              const totalOut = txData.vout.reduce((sum, vout) => sum + (parseFloat(vout.value) || 0), 0);
+              
+              console.log('BCH tx:', tx.tx_hash.slice(0,10), 'received:', receivedAmount, 'totalOut:', totalOut);
+              
+              // If we received 0 from this tx, it's likely an outgoing tx
+              // (our address was in inputs, sending to others)
+              if (receivedAmount === 0 && totalOut > 0) {
+                withdrawals.push({
+                  coin: 'BCH',
+                  amount: totalOut,
+                  date: txData.blocktime ? new Date(txData.blocktime * 1000) : new Date(),
+                  txid: tx.tx_hash,
+                  explorer: `https://blockchair.com/bitcoin-cash/transaction/${tx.tx_hash}`
+                });
+              }
+            }
+            await new Promise(r => setTimeout(r, 350));
+          } catch (e) { console.error('BCH tx detail error:', e); }
+        }
+        return withdrawals;
+      } catch (err) { console.error('BCH withdrawals error:', err); return []; }
+    }
+
+    async function fetchLTCWithdrawals(address) {
+      try {
+        const response = await fetch(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}/full?limit=20`);
+        const data = await response.json();
+        console.log('LTC full tx data:', data);
+        if (!data || !data.txs) return [];
+        
+        const withdrawals = [];
+        for (const tx of data.txs) {
+          // Check if our address is in inputs (we're sending)
+          const isInput = tx.inputs?.some(input => 
+            input.addresses && input.addresses.includes(address)
+          );
+          
+          if (isInput) {
+            // Calculate how much was sent out (to addresses that aren't ours)
+            const sentAmount = tx.outputs
+              ?.filter(out => !out.addresses?.includes(address))
+              .reduce((sum, out) => sum + (out.value || 0), 0) || 0;
+            
+            if (sentAmount > 0) {
+              withdrawals.push({
+                coin: 'LTC',
+                amount: sentAmount / 1e8,
+                date: new Date(tx.confirmed || tx.received),
+                txid: tx.hash,
+                explorer: `https://blockchair.com/litecoin/transaction/${tx.hash}`
+              });
+            }
+          }
+        }
+        return withdrawals;
+      } catch (err) { console.error('LTC withdrawals error:', err); return []; }
+    }
+
+    async function fetchDOGEWithdrawals(address) {
+      try {
+        const response = await fetch(`https://api.blockcypher.com/v1/doge/main/addrs/${address}/full?limit=20`);
+        const data = await response.json();
+        console.log('DOGE full tx data:', data);
+        if (!data || !data.txs) return [];
+        
+        const withdrawals = [];
+        for (const tx of data.txs) {
+          // Check if our address is in inputs (we're sending)
+          const isInput = tx.inputs?.some(input => 
+            input.addresses && input.addresses.includes(address)
+          );
+          
+          if (isInput) {
+            // Calculate how much was sent out (to addresses that aren't ours)
+            const sentAmount = tx.outputs
+              ?.filter(out => !out.addresses?.includes(address))
+              .reduce((sum, out) => sum + (out.value || 0), 0) || 0;
+            
+            if (sentAmount > 0) {
+              withdrawals.push({
+                coin: 'DOGE',
+                amount: sentAmount / 1e8,
+                date: new Date(tx.confirmed || tx.received),
+                txid: tx.hash,
+                explorer: `https://blockchair.com/dogecoin/transaction/${tx.hash}`
+              });
+            }
+          }
+        }
+        return withdrawals;
+      } catch (err) { console.error('DOGE withdrawals error:', err); return []; }
+    }
+
+    async function fetchAllWithdrawals() {
+      const container = document.getElementById('withdrawals');
+      
+      try {
+        console.log('Fetching withdrawals...');
+        
+        const rvnW = await fetchRVNWithdrawals(wallets.find(w => w.coin === 'RVN').address);
+        console.log('RVN withdrawals:', rvnW);
+        
+        const bchW = await fetchBCHWithdrawals(wallets.find(w => w.coin === 'BCH').address);
+        console.log('BCH withdrawals:', bchW);
+        
+        const ltcW = await fetchLTCWithdrawals(wallets.find(w => w.coin === 'LTC').address);
+        console.log('LTC withdrawals:', ltcW);
+        
+        const dogeW = await fetchDOGEWithdrawals(wallets.find(w => w.coin === 'DOGE').address);
+        console.log('DOGE withdrawals:', dogeW);
+        
+        const allWithdrawals = [...rvnW, ...bchW, ...ltcW, ...dogeW]
+          .filter(w => w.date && !isNaN(w.date.getTime())) // Filter invalid dates
+          .sort((a, b) => b.date - a.date)
+          .slice(0, 20);
+        
+        console.log('All withdrawals:', allWithdrawals);
+        
+        if (allWithdrawals.length === 0) {
+          container.innerHTML = '<div class="no-withdrawals">No recent withdrawals found</div>';
+          return;
+        }
+        
+        container.innerHTML = allWithdrawals.map(w => `
+          <div class="withdrawal-item">
+            <div class="withdrawal-left">
+              <span class="withdrawal-coin-badge">${w.coin}</span>
+              <div class="withdrawal-info">
+                <span class="withdrawal-amount">-${w.amount.toLocaleString(undefined, { maximumFractionDigits: 8 })} ${w.coin}</span>
+                <span class="withdrawal-to">Sent from wallet</span>
+              </div>
+            </div>
+            <div class="withdrawal-right">
+              <div class="withdrawal-date">${w.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${w.date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
+              <div class="withdrawal-txid"><a href="${w.explorer}" target="_blank">${w.txid.slice(0, 12)}...${w.txid.slice(-6)}</a></div>
+            </div>
+          </div>
+        `).join('');
+        
+      } catch (err) {
+        console.error('Failed to fetch withdrawals:', err);
+        container.innerHTML = '<div class="no-withdrawals">Failed to load withdrawals</div>';
+      }
     }
 
     async function fetchQuaiBalance(address) {
@@ -580,7 +959,7 @@
       }
     }
 
-    async function fetchQuaiWalletData(wallet, days = 1) {
+    async function fetchQuaiWalletData(wallet, days = 1, forceRefresh = false) {
       const el = document.getElementById(`quai-balance-${wallet.exchange}`);
       try {
         const balance = await fetchQuaiBalance(wallet.address);
@@ -589,16 +968,28 @@
         el.innerHTML = `<p class="wallet-balance">${balance.toLocaleString(undefined, { maximumFractionDigits: 4 })}<span class="wallet-balance-coin">QUAI</span></p>
           <p class="wallet-usd">$${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>`;
         
-        // Show loading for chart
-        const loadingEl = document.getElementById(`chart-loading-${wallet.exchange}`);
-        if (loadingEl) {
-          loadingEl.style.display = 'flex';
-          loadingEl.innerHTML = `<div class="spinner" style="margin-right: 8px;"></div>Loading history...`;
+        // Check cache first
+        let history = null;
+        if (!forceRefresh) {
+          history = getCachedHistory(wallet.exchange, days);
         }
         
-        const history = await fetchQuaiBalanceHistory(wallet.address, days);
-        quaiHistoryData[wallet.exchange] = history;
-        createChart(wallet.exchange, history, days);
+        if (history) {
+          quaiHistoryData[wallet.exchange] = history;
+          createChart(wallet.exchange, history, days);
+        } else {
+          // Show loading for chart
+          const loadingEl = document.getElementById(`chart-loading-${wallet.exchange}`);
+          if (loadingEl) {
+            loadingEl.style.display = 'flex';
+            loadingEl.innerHTML = `<div class="spinner" style="margin-right: 8px;"></div>Loading history...`;
+          }
+          
+          history = await fetchQuaiBalanceHistory(wallet.address, days);
+          quaiHistoryData[wallet.exchange] = history;
+          setCachedHistory(wallet.exchange, days, history);
+          createChart(wallet.exchange, history, days);
+        }
       } catch (err) {
         console.error(`Failed to fetch ${wallet.exchange} QUAI:`, err);
         el.innerHTML = `<p class="wallet-error">FAILED TO LOAD</p>`;
@@ -620,6 +1011,13 @@
       
       await fetchPrices();
       for (const wallet of wallets) { await fetchBalance(wallet); await new Promise(r => setTimeout(r, 400)); }
+      
+      // Update total immediately after crypto wallets load
+      updateTotal();
+      
+      // Fetch withdrawals in background
+      fetchAllWithdrawals();
+      
       for (const wallet of quaiWallets) { await fetchQuaiWalletData(wallet, selectedTimeRange[wallet.exchange] || 1); await new Promise(r => setTimeout(r, 400)); }
       
       updateTotal();
