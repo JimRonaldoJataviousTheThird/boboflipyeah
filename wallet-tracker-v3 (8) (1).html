@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Wallet Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Playfair+Display:wght@400;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body { 
+      min-height: 100vh; 
+      background: #1a0a0a; 
+      color: #fff;
+      font-family: 'Courier Prime', monospace;
+      position: relative;
+    }
+
+    .bg-pattern {
+      position: fixed;
+      inset: 0;
+      opacity: 0.02;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30L30 0z' fill='%23ff0000' fill-opacity='1'/%3E%3C/svg%3E");
+      background-size: 30px 30px;
+    }
+
+    .container { 
+      position: relative; 
+      z-index: 10; 
+      max-width: 900px; 
+      margin: 0 auto; 
+      padding: 48px 24px; 
+    }
+
+    header { 
+      text-align: center; 
+      margin-bottom: 48px;
+      border-bottom: 2px solid #8b0000;
+      padding-bottom: 32px;
+    }
+
+    .ornament { color: #ff6666; font-size: 24px; letter-spacing: 8px; margin-bottom: 16px; }
+
+    h1 { 
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem; 
+      font-weight: 700;
+      color: #ff4444;
+      text-shadow: 2px 2px 0px #4a0000, 0 0 30px rgba(255, 68, 68, 0.4);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .subtitle { color: #f5f5f5; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; }
+
+    .total-card { 
+      position: relative; 
+      padding: 32px; 
+      margin-bottom: 40px;
+      background: linear-gradient(135deg, #2a1010 0%, #1a0808 100%);
+      border: 2px solid #6b2222;
+      box-shadow: inset 0 0 30px rgba(139, 0, 0, 0.2), 0 0 20px rgba(139, 0, 0, 0.1);
+    }
+
+    .total-card::before {
+      content: '';
+      position: absolute;
+      top: 8px; left: 8px; right: 8px; bottom: 8px;
+      border: 1px solid #4a1a1a;
+      pointer-events: none;
+    }
+
+    .corner { position: absolute; width: 20px; height: 20px; border-color: #ff6666; border-style: solid; }
+    .corner-tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; }
+    .corner-tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; }
+    .corner-bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; }
+    .corner-br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; }
+
+    .total-label { color: #ffffff; font-size: 14px; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 8px; }
+    .total-value { display: flex; align-items: baseline; gap: 8px; justify-content: center; }
+    .total-amount { 
+      font-family: 'VT323', monospace;
+      font-size: 4rem; 
+      color: #ff4444;
+      text-shadow: 0 0 20px rgba(255, 68, 68, 0.5), 0 0 40px rgba(255, 68, 68, 0.3);
+      letter-spacing: 2px;
+    }
+    .total-currency { font-size: 1.5rem; color: #ffaaaa; }
+    .last-updated { color: #f0f0f0; font-size: 14px; margin-top: 16px; text-align: center; font-style: italic; }
+
+    .refresh-container { display: flex; justify-content: center; margin-bottom: 40px; }
+    .refresh-btn { 
+      display: flex; align-items: center; gap: 12px; padding: 14px 32px;
+      background: linear-gradient(180deg, #3d1515 0%, #2a0a0a 100%);
+      border: 2px solid #ff6666; color: #ffffff;
+      font-family: 'Courier Prime', monospace; font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 2px; cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 0 #4a0000, 0 0 20px rgba(139, 0, 0, 0.2);
+    }
+    .refresh-btn:hover { background: linear-gradient(180deg, #4a1a1a 0%, #3d1010 100%); box-shadow: 0 4px 0 #4a0000, 0 0 30px rgba(196, 30, 58, 0.4); }
+    .refresh-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #4a0000; }
+    .refresh-btn:disabled { cursor: not-allowed; opacity: 0.5; }
+    .refresh-icon { width: 18px; height: 18px; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinning { animation: spin 1s linear infinite; }
+
+    .section-title {
+      font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #ff6666;
+      text-align: center; margin: 40px 0 24px; padding-bottom: 12px;
+      border-bottom: 1px solid #4a1515; text-transform: uppercase; letter-spacing: 3px;
+    }
+
+    .wallets { display: flex; flex-direction: column; gap: 16px; }
+
+    .wallet-card { 
+      position: relative; padding: 20px 24px;
+      background: linear-gradient(135deg, #251010 0%, #1a0808 100%);
+      border: 1px solid #5a2020; transition: all 0.3s;
+    }
+    .wallet-card:hover { border-color: #aa3333; box-shadow: 0 0 20px rgba(170, 51, 51, 0.3), inset 0 0 30px rgba(139, 0, 0, 0.1); }
+    .wallet-card::before {
+      content: attr(data-index); position: absolute; top: -1px; left: 20px;
+      background: #1a0a0a; padding: 0 10px;
+      font-family: 'VT323', monospace; font-size: 18px; color: #ff9999;
+    }
+
+    .wallet-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .wallet-left { display: flex; align-items: center; gap: 16px; }
+    .coin-icon-wrapper { 
+      width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;
+      border: 2px solid #6b2222; background: #2a0a0a;
+    }
+    .coin-icon { width: 32px; height: 32px; }
+
+    .wallet-info h3 { display: flex; align-items: center; gap: 12px; font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #ffffff; }
+    .coin-badge { font-family: 'VT323', monospace; font-size: 18px; padding: 2px 10px; background: #4a1515; border: 1px solid #6b2222; color: #ffaaaa; }
+    .wallet-address { color: #f0e0e0; font-size: 14px; font-family: 'VT323', monospace; margin-top: 6px; letter-spacing: 1px; word-break: break-all; }
+    .wallet-price { color: #ffffff; font-size: 15px; margin-top: 6px; }
+    .api-source { color: #e0d0d0; font-size: 13px; margin-top: 4px; font-style: italic; }
+
+    .wallet-right { text-align: right; }
+    .wallet-balance { font-family: 'VT323', monospace; font-size: 2.2rem; color: #ff7777; text-shadow: 0 0 10px rgba(255, 102, 102, 0.4); }
+    .wallet-balance-coin { font-size: 1.2rem; color: #ffaaaa; margin-left: 8px; }
+    .wallet-usd { color: #ffffff; font-size: 1.15rem; font-family: 'Courier Prime', monospace; }
+
+    .loading-spinner { display: flex; align-items: center; gap: 8px; color: #ffffff; font-family: 'VT323', monospace; font-size: 20px; }
+    .spinner { width: 16px; height: 16px; border: 2px solid #4a1515; border-top-color: #ff6666; border-radius: 50%; animation: spin 1s linear infinite; }
+    .wallet-error { color: #ff7777; font-size: 18px; font-family: 'VT323', monospace; }
+
+    .chart-container { margin-top: 20px; padding: 16px; background: rgba(26, 8, 8, 0.8); border: 1px solid #3d1515; border-radius: 4px; }
+    .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; }
+    .chart-title { color: #ffaaaa; font-family: 'VT323', monospace; font-size: 18px; text-transform: uppercase; letter-spacing: 2px; }
+
+    .time-range-buttons { display: flex; gap: 6px; }
+    .time-btn {
+      padding: 6px 14px; background: #2a0a0a; border: 1px solid #5a2020;
+      color: #cc9999; font-family: 'VT323', monospace; font-size: 16px;
+      cursor: pointer; transition: all 0.2s; text-transform: uppercase;
+    }
+    .time-btn:hover { border-color: #aa4444; color: #ffaaaa; }
+    .time-btn.active { background: #4a1515; border-color: #ff6666; color: #ffffff; box-shadow: 0 0 10px rgba(255, 102, 102, 0.3); }
+
+    .chart-wrapper { height: 200px; position: relative; }
+    .chart-loading { display: flex; align-items: center; justify-content: center; height: 200px; color: #aa7777; font-family: 'VT323', monospace; }
+
+    footer { text-align: center; margin-top: 48px; padding-top: 32px; border-top: 1px solid #4a1515; color: #f0e0e0; font-size: 14px; line-height: 2; }
+    footer a { color: #ffccaa; text-decoration: none; border-bottom: 1px dotted #ffccaa; }
+    footer a:hover { color: #ffffff; }
+    .footer-ornament { color: #ff6666; letter-spacing: 4px; margin-bottom: 12px; }
+
+    @media (max-width: 640px) { 
+      h1 { font-size: 2rem; } 
+      .total-amount { font-size: 2.5rem; } 
+      .wallet-inner { flex-direction: column; align-items: flex-start; } 
+      .wallet-right { text-align: left; }
+      .chart-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-pattern"></div>
+  <div class="container">
+    <header>
+      <div class="ornament">◆ ◇ ◆ ◇ ◆</div>
+      <h1>Wallet Tracker</h1>
+      <p class="subtitle">~ Cryptocurrency Portfolio Monitor ~</p>
+    </header>
+
+    <div class="total-card">
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+      <p class="total-label">◈ Total Portfolio Value ◈</p>
+      <div class="total-value">
+        <span class="total-amount" id="total-usd">$---</span>
+        <span class="total-currency">USD</span>
+      </div>
+      <p class="last-updated" id="last-updated"></p>
+    </div>
+
+    <div class="refresh-container">
+      <button class="refresh-btn" id="refresh-btn" onclick="fetchAllBalances()">
+        <svg class="refresh-icon" id="refresh-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        <span id="refresh-text">Refresh</span>
+      </button>
+    </div>
+
+    <h2 class="section-title">◈ Crypto Wallets ◈</h2>
+    <div class="wallets" id="wallets"></div>
+
+    <h2 class="section-title">◈ QUAI Exchange Wallets ◈</h2>
+    <div class="wallets" id="quai-wallets"></div>
+
+    <footer>
+      <div class="footer-ornament">— ◆ —</div>
+      <p>RVN via <a href="https://cryptoscope.io" target="_blank">CryptoScope</a> • BCH via <a href="https://fullstack.cash" target="_blank">FullStack.cash</a></p>
+      <p>LTC & DOGE via <a href="https://blockcypher.com" target="_blank">BlockCypher</a> • QUAI via <a href="https://rpc.quai.network" target="_blank">Quai RPC</a></p>
+      <p>Prices from <a href="https://coingecko.com" target="_blank">CoinGecko</a></p>
+    </footer>
+  </div>
+
+  <script>
+    const CORS_PROXY = 'https://corsproxy.io/?';
+    
+    const wallets = [
+      { coin: 'RVN', name: 'Ravencoin', address: 'RXtpH2yp6AA6VvPVTuhCrqxYG7vCGEPMB5', geckoId: 'ravencoin' },
+      { coin: 'BCH', name: 'Bitcoin Cash', address: 'qqqea0a7ryny69sskvx857apy3r6wt6w35524nm4xw', geckoId: 'bitcoin-cash' },
+      { coin: 'LTC', name: 'Litecoin', address: 'ltc1qlg96gqruz4vu5w86z6rpqxt6ugqxrljxzpvcu8', geckoId: 'litecoin' },
+      { coin: 'DOGE', name: 'Dogecoin', address: 'D6rnVyuuHB3x8et741kmXzFuZSTVnJQDke', geckoId: 'dogecoin' }
+    ];
+
+    const quaiWallets = [
+      { exchange: 'MEXC', address: '0x006243e4eE6C2CF6F993036f27f0A88f265Ddb4a' },
+      { exchange: 'GATE', address: '0x007e2F1a4709B812F339f22E18032118FBcc8987' }
+    ];
+
+    const coinIcons = {
+      RVN: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M16 6l-8 5v10l8 5 8-5V11l-8-5zm0 2.5l5.5 3.5v7l-5.5 3.5-5.5-3.5v-7L16 8.5z" fill="#ffffff"/></svg>`,
+      BCH: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M21.2 13.3c-.3-2-2.1-2.7-4.5-2.9V8h-1.8v2.3h-1.5V8h-1.8v2.4H9v1.8h1.3c.7 0 .9.4.9.7v7c0 .5-.3.7-.7.7H9l-.3 2h4.5v2.4h1.8v-2.4h1.5v2.4h1.8v-2.5c3-.2 5.1-.9 5.4-3.6.2-2.2-.8-3.2-2.5-3.6zm-5.9-1.2h2c1.3 0 2 .4 2 1.4 0 1-.7 1.4-2 1.4h-2v-2.8zm2.5 8h-2.5v-3.2h2.5c1.5 0 2.2.5 2.2 1.6 0 1.1-.7 1.6-2.2 1.6z" fill="#ffffff"/></svg>`,
+      LTC: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M12.5 24h9.8l.8-3h-6.2l1.5-5.5 2.5-1-.5 1.5h2.5l1-3.5-2.5 1 1.5-5.5h-3.5l-2.5 9-2.5 1 .5-2h-2.5l-1.5 5.5 2.5-1-.8 3z" fill="#ffffff"/></svg>`,
+      DOGE: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M13 9h4.5c4 0 6.5 2.5 6.5 7s-2.5 7-6.5 7H13V9zm3 2.5v9h1.5c2.5 0 4-1.5 4-4.5s-1.5-4.5-4-4.5H16zm-3 3h6v2h-6v-2z" fill="#ffffff"/></svg>`,
+      QUAI: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M16 6C10.5 6 6 10.5 6 16s4.5 10 10 10 10-4.5 10-10S21.5 6 16 6zm0 3c3.9 0 7 3.1 7 7s-3.1 7-7 7-7-3.1-7-7 3.1-7 7-7zm0 2.5c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5z" fill="#ffffff"/></svg>`
+    };
+
+    let balances = {}, prices = {}, quaiBalances = {}, quaiCharts = {}, quaiHistoryData = {}, selectedTimeRange = {};
+
+    function renderWallets() {
+      document.getElementById('wallets').innerHTML = wallets.map((wallet, index) => `
+        <div class="wallet-card" data-index="0${index + 1}">
+          <div class="wallet-inner">
+            <div class="wallet-left">
+              <div class="coin-icon-wrapper">${coinIcons[wallet.coin]}</div>
+              <div class="wallet-info">
+                <h3>${wallet.name} <span class="coin-badge">${wallet.coin}</span></h3>
+                <p class="wallet-address">${wallet.address}</p>
+                <p class="wallet-price" id="price-${wallet.coin}">Loading price...</p>
+                <p class="api-source" id="source-${wallet.coin}"></p>
+              </div>
+            </div>
+            <div class="wallet-right" id="balance-${wallet.coin}">
+              <div class="loading-spinner"><div class="spinner"></div><span>LOADING...</span></div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderQuaiWallets() {
+      document.getElementById('quai-wallets').innerHTML = quaiWallets.map((wallet, index) => {
+        selectedTimeRange[wallet.exchange] = 1;
+        return `
+        <div class="wallet-card" data-index="0${index + 1}">
+          <div class="wallet-inner">
+            <div class="wallet-left">
+              <div class="coin-icon-wrapper">${coinIcons.QUAI}</div>
+              <div class="wallet-info">
+                <h3>${wallet.exchange} <span class="coin-badge">QUAI</span></h3>
+                <p class="wallet-address">${wallet.address}</p>
+                <p class="api-source">via Quai RPC</p>
+              </div>
+            </div>
+            <div class="wallet-right" id="quai-balance-${wallet.exchange}">
+              <div class="loading-spinner"><div class="spinner"></div><span>LOADING...</span></div>
+            </div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-header">
+              <p class="chart-title">Balance History <span id="chart-info-${wallet.exchange}" style="font-size: 14px; color: #aa7777;"></span></p>
+              <div class="time-range-buttons">
+                <button class="time-btn active" data-exchange="${wallet.exchange}" data-days="1" onclick="changeTimeRange('${wallet.exchange}', 1)">24H</button>
+                <button class="time-btn" data-exchange="${wallet.exchange}" data-days="7" onclick="changeTimeRange('${wallet.exchange}', 7)">7D</button>
+                <button class="time-btn" data-exchange="${wallet.exchange}" data-days="30" onclick="changeTimeRange('${wallet.exchange}', 30)">30D</button>
+                <button class="time-btn" data-exchange="${wallet.exchange}" data-days="90" onclick="changeTimeRange('${wallet.exchange}', 90)">90D</button>
+              </div>
+            </div>
+            <div class="chart-wrapper"><canvas id="chart-${wallet.exchange}"></canvas></div>
+            <div class="chart-loading" id="chart-loading-${wallet.exchange}">
+              <div class="spinner" style="margin-right: 8px;"></div>Loading chart data...
+            </div>
+          </div>
+        </div>
+      `}).join('');
+    }
+
+    async function changeTimeRange(exchange, days) {
+      selectedTimeRange[exchange] = days;
+      document.querySelectorAll(`.time-btn[data-exchange="${exchange}"]`).forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.days) === days);
+      });
+      
+      // Need to refetch data for new time range
+      const wallet = quaiWallets.find(w => w.exchange === exchange);
+      if (wallet) {
+        const loadingEl = document.getElementById(`chart-loading-${exchange}`);
+        const canvas = document.getElementById(`chart-${exchange}`);
+        if (loadingEl) {
+          loadingEl.style.display = 'flex';
+          loadingEl.innerHTML = `<div class="spinner" style="margin-right: 8px;"></div>Loading ${days === 1 ? '24H' : days + 'D'} history...`;
+        }
+        if (canvas) canvas.style.display = 'none';
+        
+        const history = await fetchQuaiBalanceHistory(wallet.address, days);
+        quaiHistoryData[exchange] = history;
+        createChart(exchange, history, days);
+      }
+    }
+
+    async function fetchPrices() {
+      try {
+        const ids = [...wallets.map(w => w.geckoId), 'quai-network'].join(',');
+        const data = await (await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`)).json();
+        wallets.forEach(wallet => {
+          if (data[wallet.geckoId]) {
+            prices[wallet.coin] = data[wallet.geckoId].usd;
+            document.getElementById(`price-${wallet.coin}`).textContent = 
+              `$${prices[wallet.coin].toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 6 })} / ${wallet.coin}`;
+          }
+        });
+        if (data['quai-network']) prices['QUAI'] = data['quai-network'].usd;
+      } catch (err) { console.error('Failed to fetch prices:', err); }
+    }
+
+    async function fetchRVN(address) {
+      const data = await (await fetch(`${CORS_PROXY}${encodeURIComponent(`https://rvn.cryptoscope.io/api/getaddress/?address=${address}`)}`)).json();
+      if (data?.balance !== undefined) return { balance: parseFloat(data.balance), source: 'CryptoScope' };
+      throw new Error('RVN API failed');
+    }
+
+    async function fetchBCH(address) {
+      const data = await (await fetch(`${CORS_PROXY}${encodeURIComponent(`https://bchn.fullstack.cash/v5/electrumx/balance/bitcoincash:${address}`)}`)).json();
+      if (data.balance?.confirmed !== undefined) return { balance: (data.balance.confirmed + (data.balance.unconfirmed || 0)) / 1e8, source: 'FullStack.cash' };
+      throw new Error('BCH API failed');
+    }
+
+    async function fetchLTC(address) {
+      const data = await (await fetch(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}/balance`)).json();
+      return { balance: data.balance / 1e8, source: 'BlockCypher' };
+    }
+
+    async function fetchDOGE(address) {
+      const data = await (await fetch(`https://api.blockcypher.com/v1/doge/main/addrs/${address}/balance`)).json();
+      return { balance: data.balance / 1e8, source: 'BlockCypher' };
+    }
+
+    async function fetchQuaiBalance(address) {
+      const response = await fetch('https://rpc.quai.network/cyprus1/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          method: 'quai_getBalance',
+          params: [address, 'latest'],
+          id: 1
+        })
+      });
+      const data = await response.json();
+      if (data.result) {
+        return parseInt(data.result, 16) / 1e18;
+      }
+      throw new Error('QUAI RPC failed');
+    }
+
+    async function fetchQuaiBlockNumber() {
+      const response = await fetch('https://rpc.quai.network/cyprus1/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          method: 'quai_blockNumber',
+          params: [],
+          id: 1
+        })
+      });
+      const data = await response.json();
+      if (data.result) {
+        return parseInt(data.result, 16);
+      }
+      throw new Error('Failed to get block number');
+    }
+
+    async function fetchQuaiBalanceAtBlock(address, blockHex) {
+      const response = await fetch('https://rpc.quai.network/cyprus1/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          method: 'quai_getBalance',
+          params: [address, blockHex],
+          id: 1
+        })
+      });
+      const data = await response.json();
+      if (data.result) {
+        return parseInt(data.result, 16) / 1e18;
+      }
+      return null;
+    }
+
+    async function fetchQuaiBalanceHistory(address, days) {
+      const BLOCKS_PER_DAY = 17280;
+      const targetDataPoints = 100; // How many points we want on the chart
+      
+      try {
+        const currentBlock = await fetchQuaiBlockNumber();
+        const totalBlocks = days * BLOCKS_PER_DAY;
+        const startBlock = Math.max(1, currentBlock - totalBlocks);
+        const stepSize = Math.max(90, Math.floor(totalBlocks / targetDataPoints));
+        
+        console.log(`Fetching history: currentBlock=${currentBlock}, startBlock=${startBlock}, stepSize=${stepSize}`);
+        
+        const historyData = [];
+        let fetchCount = 0;
+        
+        // Fetch balances at intervals
+        for (let block = startBlock; block <= currentBlock; block += stepSize) {
+          const blockHex = '0x' + block.toString(16);
+          const balance = await fetchQuaiBalanceAtBlock(address, blockHex);
+          
+          if (balance !== null) {
+            // Estimate date based on block number
+            const blocksFromNow = currentBlock - block;
+            const msFromNow = (blocksFromNow / BLOCKS_PER_DAY) * 24 * 60 * 60 * 1000;
+            const date = new Date(Date.now() - msFromNow);
+            
+            historyData.push({
+              block: block,
+              date: date.toISOString(),
+              balance: balance
+            });
+          }
+          
+          fetchCount++;
+          // Update loading status every 10 fetches
+          if (fetchCount % 10 === 0) {
+            const progress = Math.round((block - startBlock) / (currentBlock - startBlock) * 100);
+            const loadingEl = document.getElementById(`chart-loading-${quaiWallets.find(w => w.address === address)?.exchange}`);
+            if (loadingEl) loadingEl.innerHTML = `<div class="spinner" style="margin-right: 8px;"></div>Loading history... ${progress}%`;
+          }
+          
+          // Small delay to avoid rate limiting
+          await new Promise(r => setTimeout(r, 50));
+        }
+        
+        console.log(`Fetched ${historyData.length} data points for ${address.slice(0,10)}`);
+        return historyData;
+      } catch (err) {
+        console.error('Failed to fetch QUAI history:', err);
+        return null;
+      }
+    }
+
+    function createChart(exchange, historyData, days = 1) {
+      const canvas = document.getElementById(`chart-${exchange}`);
+      const loadingEl = document.getElementById(`chart-loading-${exchange}`);
+      const infoEl = document.getElementById(`chart-info-${exchange}`);
+      
+      if (!historyData || !Array.isArray(historyData) || historyData.length === 0) {
+        loadingEl.innerHTML = 'No historical data available';
+        loadingEl.style.display = 'flex';
+        canvas.style.display = 'none';
+        if (infoEl) infoEl.textContent = '';
+        return;
+      }
+
+      // Sort by date
+      const sortedData = [...historyData].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      if (sortedData.length === 0) {
+        loadingEl.innerHTML = `No data available`;
+        loadingEl.style.display = 'flex';
+        canvas.style.display = 'none';
+        if (infoEl) infoEl.textContent = '';
+        return;
+      }
+
+      // Show date range info
+      if (infoEl) {
+        const firstDate = new Date(sortedData[0].date);
+        const lastDate = new Date(sortedData[sortedData.length - 1].date);
+        let dateFormat;
+        if (days <= 1) {
+          dateFormat = { hour: '2-digit', minute: '2-digit' };
+        } else {
+          dateFormat = { month: 'short', day: 'numeric' };
+        }
+        infoEl.textContent = `(${sortedData.length} points: ${firstDate.toLocaleString('en-US', dateFormat)} - ${lastDate.toLocaleString('en-US', dateFormat)})`;
+      }
+
+      loadingEl.style.display = 'none';
+      canvas.style.display = 'block';
+
+      const labels = sortedData.map(d => {
+        const date = new Date(d.date);
+        if (days <= 1) {
+          return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        } else if (days <= 7) {
+          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit' });
+        }
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      });
+      const values = sortedData.map(d => d.balance);
+
+      if (quaiCharts[exchange]) quaiCharts[exchange].destroy();
+
+      const pointRadius = sortedData.length <= 30 ? 3 : sortedData.length <= 60 ? 2 : sortedData.length <= 100 ? 1 : 0;
+
+      quaiCharts[exchange] = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Balance (QUAI)', data: values,
+            borderColor: '#ff6666', backgroundColor: 'rgba(255, 102, 102, 0.1)',
+            borderWidth: 2, fill: true, tension: 0.4,
+            pointRadius: pointRadius, pointHoverRadius: 5,
+            pointBackgroundColor: '#ff6666', pointHoverBackgroundColor: '#ff6666'
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#2a1010', borderColor: '#ff6666', borderWidth: 1,
+              titleColor: '#ffffff', bodyColor: '#ffaaaa',
+              callbacks: { label: ctx => `${ctx.parsed.y.toLocaleString(undefined, { maximumFractionDigits: 2 })} QUAI` }
+            }
+          },
+          scales: {
+            x: { grid: { color: 'rgba(255, 102, 102, 0.1)' }, ticks: { color: '#aa8888', font: { family: 'VT323', size: 12 }, maxTicksLimit: 8 } },
+            y: { grid: { color: 'rgba(255, 102, 102, 0.1)' }, ticks: { color: '#aa8888', font: { family: 'VT323', size: 12 }, callback: v => v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(1)+'K' : v.toFixed(0) } }
+          },
+          interaction: { intersect: false, mode: 'index' }
+        }
+      });
+    }
+
+    async function fetchBalance(wallet) {
+      const el = document.getElementById(`balance-${wallet.coin}`);
+      const sourceEl = document.getElementById(`source-${wallet.coin}`);
+      try {
+        const result = await ({ RVN: fetchRVN, BCH: fetchBCH, LTC: fetchLTC, DOGE: fetchDOGE }[wallet.coin](wallet.address));
+        balances[wallet.coin] = result.balance;
+        const usdValue = result.balance * (prices[wallet.coin] || 0);
+        el.innerHTML = `<p class="wallet-balance">${result.balance.toLocaleString(undefined, { maximumFractionDigits: 8 })}<span class="wallet-balance-coin">${wallet.coin}</span></p>
+          <p class="wallet-usd">$${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>`;
+        sourceEl.textContent = `via ${result.source}`;
+      } catch (err) {
+        console.error(`Failed to fetch ${wallet.coin}:`, err);
+        el.innerHTML = `<p class="wallet-error">FAILED TO LOAD</p>`;
+        sourceEl.textContent = 'API error';
+        balances[wallet.coin] = 0;
+      }
+    }
+
+    async function fetchQuaiWalletData(wallet, days = 1) {
+      const el = document.getElementById(`quai-balance-${wallet.exchange}`);
+      try {
+        const balance = await fetchQuaiBalance(wallet.address);
+        quaiBalances[wallet.exchange] = balance;
+        const usdValue = balance * (prices['QUAI'] || 0);
+        el.innerHTML = `<p class="wallet-balance">${balance.toLocaleString(undefined, { maximumFractionDigits: 4 })}<span class="wallet-balance-coin">QUAI</span></p>
+          <p class="wallet-usd">$${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>`;
+        
+        // Show loading for chart
+        const loadingEl = document.getElementById(`chart-loading-${wallet.exchange}`);
+        if (loadingEl) {
+          loadingEl.style.display = 'flex';
+          loadingEl.innerHTML = `<div class="spinner" style="margin-right: 8px;"></div>Loading history...`;
+        }
+        
+        const history = await fetchQuaiBalanceHistory(wallet.address, days);
+        quaiHistoryData[wallet.exchange] = history;
+        createChart(wallet.exchange, history, days);
+      } catch (err) {
+        console.error(`Failed to fetch ${wallet.exchange} QUAI:`, err);
+        el.innerHTML = `<p class="wallet-error">FAILED TO LOAD</p>`;
+        quaiBalances[wallet.exchange] = 0;
+        document.getElementById(`chart-loading-${wallet.exchange}`).innerHTML = 'Failed to load chart';
+      }
+    }
+
+    function updateTotal() {
+      let total = 0;
+      wallets.forEach(w => total += (balances[w.coin] || 0) * (prices[w.coin] || 0));
+      document.getElementById('total-usd').textContent = `$${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+    }
+
+    async function fetchAllBalances() {
+      const btn = document.getElementById('refresh-btn'), icon = document.getElementById('refresh-icon'), text = document.getElementById('refresh-text');
+      btn.disabled = true; icon.classList.add('spinning'); text.textContent = 'Loading...';
+      
+      await fetchPrices();
+      for (const wallet of wallets) { await fetchBalance(wallet); await new Promise(r => setTimeout(r, 400)); }
+      for (const wallet of quaiWallets) { await fetchQuaiWalletData(wallet, selectedTimeRange[wallet.exchange] || 1); await new Promise(r => setTimeout(r, 400)); }
+      
+      updateTotal();
+      btn.disabled = false; icon.classList.remove('spinning'); text.textContent = 'Refresh';
+    }
+
+    renderWallets();
+    renderQuaiWallets();
+    fetchAllBalances();
+  </script>
+</body>
+</html>
