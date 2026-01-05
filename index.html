@@ -378,6 +378,29 @@
       } catch (e) { console.error('Cache write error:', e); }
     }
 
+    function getCachedWithdrawals() {
+      try {
+        const cached = localStorage.getItem('withdrawals_cache');
+        if (cached) {
+          const { data, timestamp } = JSON.parse(cached);
+          if (Date.now() - timestamp < CACHE_DURATION) {
+            console.log('Using cached withdrawals');
+            return data;
+          }
+        }
+      } catch (e) { console.error('Withdrawals cache read error:', e); }
+      return null;
+    }
+
+    function setCachedWithdrawals(data) {
+      try {
+        localStorage.setItem('withdrawals_cache', JSON.stringify({
+          data: data,
+          timestamp: Date.now()
+        }));
+      } catch (e) { console.error('Withdrawals cache write error:', e); }
+    }
+
     function renderWallets() {
       document.getElementById('wallets').innerHTML = wallets.map((wallet, index) => `
         <div class="wallet-card" data-index="0${index + 1}">
@@ -508,59 +531,66 @@
     // Withdrawal tracking functions
     async function fetchRVNWithdrawals(address) {
       try {
-        // Use Blockchair API for RVN
-        const url = `https://api.blockchair.com/ravencoin/dashboards/address/${address}?limit=10,0`;
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-          console.log('RVN Blockchair API response not ok:', response.status);
-          return [];
-        }
-        
-        const data = await response.json();
-        console.log('RVN Blockchair data:', data);
-        
-        if (!data || !data.data || !data.data[address]) return [];
-        
-        const addrData = data.data[address];
-        const txHashes = addrData.transactions || [];
-        
-        if (txHashes.length === 0) return [];
-        
-        // Fetch individual transactions (Blockchair allows batching)
+        // Fetch multiple pages to find withdrawals
         const withdrawals = [];
-        const batchHashes = txHashes.slice(0, 5).join(',');
+        let foundWithdrawals = 0;
         
-        const txUrl = `https://api.blockchair.com/ravencoin/dashboards/transactions/${batchHashes}`;
-        const txResponse = await fetch(txUrl);
-        const txData = await txResponse.json();
-        
-        console.log('RVN tx details:', txData);
-        
-        if (txData && txData.data) {
-          for (const [hash, tx] of Object.entries(txData.data)) {
-            // Check if our address is in inputs (withdrawal)
-            const isInput = tx.inputs?.some(inp => inp.recipient === address);
-            
-            if (isInput) {
-              // Sum outputs to other addresses
-              const sentAmount = tx.outputs
-                ?.filter(out => out.recipient !== address)
-                .reduce((sum, out) => sum + (out.value || 0), 0) || 0;
-              
-              if (sentAmount > 0) {
-                withdrawals.push({
-                  coin: 'RVN',
-                  amount: sentAmount / 1e8,
-                  date: new Date(tx.transaction.time),
-                  txid: hash,
-                  explorer: `https://blockchair.com/ravencoin/transaction/${hash}`
-                });
-              }
-            }
+        for (let page = 1; page <= 20 && foundWithdrawals < 5; page++) {
+          const url = `${CORS_PROXY}${encodeURIComponent(`https://blockbook.ravencoin.org/api/v2/address/${address}?details=txids&pageSize=20&page=${page}`)}`;
+          const response = await fetch(url);
+          
+          if (!response.ok) {
+            console.log('RVN Blockbook page', page, 'not ok:', response.status);
+            break;
           }
+          
+          const data = await response.json();
+          console.log('RVN Blockbook page', page, ':', data.txids?.length, 'txids');
+          
+          if (!data || !data.txids || data.txids.length === 0) break;
+          
+          // Check each transaction
+          for (const txid of data.txids) {
+            if (foundWithdrawals >= 10) break; // Limit total withdrawals found
+            
+            try {
+              const txUrl = `${CORS_PROXY}${encodeURIComponent(`https://blockbook.ravencoin.org/api/v2/tx/${txid}`)}`;
+              const txResponse = await fetch(txUrl);
+              
+              if (!txResponse.ok) continue;
+              
+              const tx = await txResponse.json();
+              
+              // Check if our address is in vin (inputs = we're sending)
+              const isInput = tx.vin?.some(vin => vin.addresses?.includes(address));
+              
+              if (isInput) {
+                // Calculate amount sent to other addresses
+                const sentAmount = tx.vout
+                  ?.filter(vout => !vout.addresses?.includes(address))
+                  .reduce((sum, vout) => sum + parseInt(vout.value || 0), 0) || 0;
+                
+                if (sentAmount > 0) {
+                  console.log('RVN withdrawal found:', txid.slice(0, 10), sentAmount / 1e8);
+                  withdrawals.push({
+                    coin: 'RVN',
+                    amount: sentAmount / 1e8,
+                    date: new Date(tx.blockTime * 1000),
+                    txid: tx.txid,
+                    explorer: `https://blockbook.ravencoin.org/tx/${tx.txid}`
+                  });
+                  foundWithdrawals++;
+                }
+              }
+              
+              await new Promise(r => setTimeout(r, 100));
+            } catch (e) { console.error('RVN tx fetch error:', e); }
+          }
+          
+          await new Promise(r => setTimeout(r, 200));
         }
         
+        console.log('RVN total withdrawals found:', withdrawals.length);
         return withdrawals;
       } catch (err) { console.error('RVN withdrawals error:', err); return []; }
     }
@@ -579,7 +609,7 @@
         
         const withdrawals = [];
         // Get details for recent transactions
-        for (const tx of data.transactions.slice(0, 10)) {
+        for (const tx of data.transactions.slice(0, 6)) {
           try {
             const txUrl = `${CORS_PROXY}${encodeURIComponent(`https://bchn.fullstack.cash/v5/electrumx/tx/data/${tx.tx_hash}`)}`;
             const txResponse = await fetch(txUrl);
@@ -619,7 +649,7 @@
                 });
               }
             }
-            await new Promise(r => setTimeout(r, 350));
+            await new Promise(r => setTimeout(r, 500));
           } catch (e) { console.error('BCH tx detail error:', e); }
         }
         return withdrawals;
@@ -699,6 +729,13 @@
     async function fetchAllWithdrawals() {
       const container = document.getElementById('withdrawals');
       
+      // Check cache first
+      const cached = getCachedWithdrawals();
+      if (cached && cached.length > 0) {
+        renderWithdrawals(cached, container);
+        return;
+      }
+      
       try {
         console.log('Fetching withdrawals...');
         
@@ -715,18 +752,36 @@
         console.log('DOGE withdrawals:', dogeW);
         
         const allWithdrawals = [...rvnW, ...bchW, ...ltcW, ...dogeW]
-          .filter(w => w.date && !isNaN(w.date.getTime())) // Filter invalid dates
+          .filter(w => w.date && !isNaN(w.date.getTime()))
           .sort((a, b) => b.date - a.date)
           .slice(0, 20);
         
         console.log('All withdrawals:', allWithdrawals);
         
-        if (allWithdrawals.length === 0) {
-          container.innerHTML = '<div class="no-withdrawals">No recent withdrawals found</div>';
-          return;
-        }
+        // Cache the results (convert dates to ISO strings for serialization)
+        const cacheData = allWithdrawals.map(w => ({
+          ...w,
+          date: w.date.toISOString()
+        }));
+        setCachedWithdrawals(cacheData);
         
-        container.innerHTML = allWithdrawals.map(w => `
+        renderWithdrawals(allWithdrawals, container);
+        
+      } catch (err) {
+        console.error('Failed to fetch withdrawals:', err);
+        container.innerHTML = '<div class="no-withdrawals">Failed to load withdrawals</div>';
+      }
+    }
+
+    function renderWithdrawals(withdrawals, container) {
+      if (withdrawals.length === 0) {
+        container.innerHTML = '<div class="no-withdrawals">No recent withdrawals found</div>';
+        return;
+      }
+      
+      container.innerHTML = withdrawals.map(w => {
+        const date = w.date instanceof Date ? w.date : new Date(w.date);
+        return `
           <div class="withdrawal-item">
             <div class="withdrawal-left">
               <span class="withdrawal-coin-badge">${w.coin}</span>
@@ -736,16 +791,11 @@
               </div>
             </div>
             <div class="withdrawal-right">
-              <div class="withdrawal-date">${w.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${w.date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
+              <div class="withdrawal-date">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
               <div class="withdrawal-txid"><a href="${w.explorer}" target="_blank">${w.txid.slice(0, 12)}...${w.txid.slice(-6)}</a></div>
             </div>
           </div>
-        `).join('');
-        
-      } catch (err) {
-        console.error('Failed to fetch withdrawals:', err);
-        container.innerHTML = '<div class="no-withdrawals">Failed to load withdrawals</div>';
-      }
+        `}).join('');
     }
 
     async function fetchQuaiBalance(address) {
