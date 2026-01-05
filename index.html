@@ -610,10 +610,11 @@
         <span class="total-currency">USD</span>
       </div>
       <p class="last-updated" id="last-updated"></p>
+      <p class="last-updated" id="next-refresh" style="font-size: 12px; margin-top: 8px; color: #aa8888;"></p>
     </div>
 
     <div class="refresh-container">
-      <button class="refresh-btn" id="refresh-btn" onclick="fetchAllBalances()">
+      <button class="refresh-btn" id="refresh-btn" onclick="manualRefresh()">
         <svg class="refresh-icon" id="refresh-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
         </svg>
@@ -640,7 +641,7 @@
       </div>
     </div>
 
-    <h2 class="section-title">🔥 QUAI Burn Wallet Deposits 🔥</h2>
+    <h2 class="section-title">🔥 QUAI Burn Wallet Deposits 🔥 <span id="burn-auto-refresh" style="font-size: 12px; color: #aa8888; font-family: 'VT323', monospace;">(auto-refreshes every 5min)</span></h2>
     <div class="burn-container" id="burn-deposits">
       <div class="loading-spinner" style="justify-content: center; padding: 20px;">
         <div class="spinner"></div>
@@ -686,6 +687,7 @@
     let balances = {}, prices = {}, quaiBalances = {}, quaiCharts = {}, quaiHistoryData = {}, selectedTimeRange = {};
     let loadedWithdrawals = [], loadedBurnDeposits = [], lastBurnTime = null;
     let withdrawalsLoaded = false, burnDepositsLoaded = false;
+    let lastBurnRefreshTime = null;
 
     const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache
 
@@ -909,15 +911,35 @@
       }
     }
 
-    async function fetchBurnDeposits() {
+    async function fetchBurnDeposits(forceRefresh = false) {
       const container = document.getElementById('burn-deposits');
       
-      // Check cache first
-      const cached = getCachedBurnDeposits();
-      if (cached) {
-        renderBurnDeposits(cached.deposits, cached.totalBalance, container);
-        return;
+      // Show loading state when forcing refresh
+      if (forceRefresh) {
+        container.innerHTML = `
+          <div class="loading-spinner" style="justify-content: center; padding: 20px;">
+            <div class="spinner"></div>
+            <span>Loading burn deposits...</span>
+          </div>
+        `;
       }
+      
+      // Check cache first (unless forcing refresh)
+      if (!forceRefresh) {
+        const cached = getCachedBurnDeposits();
+        if (cached) {
+          renderBurnDeposits(cached.deposits, cached.totalBalance, container);
+          return;
+        }
+      }
+      
+      // Show loading indicator
+      container.innerHTML = `
+        <div class="loading-spinner" style="justify-content: center; padding: 20px;">
+          <div class="spinner"></div>
+          <span>Loading burn deposits...</span>
+        </div>
+      `;
       
       try {
         console.log('Fetching burn wallet deposits...');
@@ -1081,6 +1103,10 @@
     function renderBurnDeposits(deposits, totalBalance, container) {
       const quaiPrice = prices['QUAI'] || 0;
       const totalUsd = totalBalance * quaiPrice;
+      
+      // Track refresh time
+      lastBurnRefreshTime = new Date();
+      updateBurnRefreshIndicator();
       
       // Store for pending burns calculation
       loadedBurnDeposits = deposits;
@@ -1345,15 +1371,35 @@
       } catch (err) { console.error('DOGE withdrawals error:', err); return []; }
     }
 
-    async function fetchAllWithdrawals() {
+    async function fetchAllWithdrawals(forceRefresh = false) {
       const container = document.getElementById('withdrawals');
       
-      // Check cache first
-      const cached = getCachedWithdrawals();
-      if (cached && cached.length > 0) {
-        renderWithdrawals(cached, container);
-        return;
+      // Show loading state when forcing refresh
+      if (forceRefresh) {
+        container.innerHTML = `
+          <div class="loading-spinner" style="justify-content: center; padding: 20px;">
+            <div class="spinner"></div>
+            <span>Loading withdrawals...</span>
+          </div>
+        `;
       }
+      
+      // Check cache first (unless forcing refresh)
+      if (!forceRefresh) {
+        const cached = getCachedWithdrawals();
+        if (cached && cached.length > 0) {
+          renderWithdrawals(cached, container);
+          return;
+        }
+      }
+      
+      // Show loading indicator
+      container.innerHTML = `
+        <div class="loading-spinner" style="justify-content: center; padding: 20px;">
+          <div class="spinner"></div>
+          <span>Loading withdrawals...</span>
+        </div>
+      `;
       
       try {
         console.log('Fetching withdrawals...');
@@ -1431,64 +1477,103 @@
       
       // Wait for both withdrawals and burns to be loaded
       if (!withdrawalsLoaded || !burnDepositsLoaded) {
-        // Still loading, keep spinner
         return;
       }
       
-      // If no burn deposits found, all withdrawals are pending
-      if (loadedBurnDeposits.length === 0 || !lastBurnTime) {
-        if (loadedWithdrawals.length === 0) {
-          container.innerHTML = `
-            <div class="no-pending">
-              <div class="all-burned-icon">📭</div>
-              No withdrawal or burn data available
-            </div>
-          `;
-          return;
-        }
-        
-        // All withdrawals are pending since no burns found
-        renderPendingBurnsUI(loadedWithdrawals, container, null);
-        return;
-      }
-      
-      // Filter withdrawals that happened after the last burn
-      const pendingWithdrawals = loadedWithdrawals.filter(w => {
-        const withdrawalDate = w.date instanceof Date ? w.date : new Date(w.date);
-        return withdrawalDate > lastBurnTime;
-      });
-      
-      renderPendingBurnsUI(pendingWithdrawals, container, lastBurnTime);
-    }
-
-    function renderPendingBurnsUI(pendingWithdrawals, container, lastBurnTime) {
-      // Calculate total pending in USD
-      let totalPendingUsd = 0;
-      pendingWithdrawals.forEach(w => {
-        const price = prices[w.coin] || 0;
-        totalPendingUsd += w.amount * price;
-      });
-      
-      if (pendingWithdrawals.length === 0) {
-        const burnTimeStr = lastBurnTime ? lastBurnTime.toLocaleString('en-US', { 
-          month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
-        }) : 'N/A';
-        
+      // If no data at all
+      if (loadedWithdrawals.length === 0 && loadedBurnDeposits.length === 0) {
         container.innerHTML = `
           <div class="no-pending">
-            <div class="all-burned-icon">✅</div>
-            All tracked withdrawals have been burned!
-            <div style="font-size: 14px; margin-top: 8px; color: #66aa66;">
-              Last burn: ${burnTimeStr}
-            </div>
+            <div class="all-burned-icon">📭</div>
+            No withdrawal or burn data available
           </div>
         `;
         return;
       }
       
-      const lastBurnStr = lastBurnTime ? lastBurnTime.toLocaleString('en-US', { 
-        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
-      }) : 'No burns found';
+      // Convert withdrawals to USD and add remaining balance tracking
+      const withdrawalsWithBalance = loadedWithdrawals.map(w => {
+        const date = w.date instanceof Date ? w.date : new Date(w.date);
+        const price = prices[w.coin] || 0;
+        const usdValue = w.amount * price;
+        return {
+          ...w,
+          date,
+          usdValue,
+          remainingUsd: usdValue, // Track how much hasn't been burned yet
+          originalUsd: usdValue
+        };
+      }).sort((a, b) => a.date - b.date); // Sort oldest first
+      
+      // Convert burns to USD
+      const quaiPrice = prices['QUAI'] || 0;
+      const burnsWithUsd = loadedBurnDeposits.map(b => {
+        const date = b.date instanceof Date ? b.date : new Date(b.date);
+        const usdValue = b.amount * quaiPrice;
+        return {
+          ...b,
+          date,
+          usdValue
+        };
+      }).sort((a, b) => a.date - b.date); // Sort oldest first
+      
+      console.log('=== Pending Burns Calculation ===');
+      console.log('Withdrawals (oldest first):', withdrawalsWithBalance.map(w => 
+        `${w.coin} $${w.usdValue.toFixed(2)} @ ${w.date.toLocaleString()}`
+      ));
+      console.log('Burns (oldest first):', burnsWithUsd.map(b => 
+        `$${b.usdValue.toFixed(2)} @ ${b.date.toLocaleString()}`
+      ));
+      
+      // Process each burn - deduct from oldest withdrawals that happened BEFORE the burn
+      for (const burn of burnsWithUsd) {
+        let burnRemaining = burn.usdValue;
+        
+        console.log(`\nProcessing burn: $${burn.usdValue.toFixed(2)} @ ${burn.date.toLocaleString()}`);
+        
+        // Find withdrawals that happened before this burn and still have remaining balance
+        for (const withdrawal of withdrawalsWithBalance) {
+          if (burnRemaining <= 0) break;
+          if (withdrawal.remainingUsd <= 0) continue;
+          if (withdrawal.date >= burn.date) continue; // Only process withdrawals BEFORE this burn
+          
+          const deduction = Math.min(burnRemaining, withdrawal.remainingUsd);
+          withdrawal.remainingUsd -= deduction;
+          burnRemaining -= deduction;
+          
+          console.log(`  Deducted $${deduction.toFixed(2)} from ${withdrawal.coin} withdrawal, remaining: $${withdrawal.remainingUsd.toFixed(2)}`);
+        }
+        
+        if (burnRemaining > 0) {
+          console.log(`  Burn has $${burnRemaining.toFixed(2)} excess (more burned than withdrawn)`);
+        }
+      }
+      
+      // Find withdrawals that still have remaining balance (pending)
+      const pendingWithdrawals = withdrawalsWithBalance
+        .filter(w => w.remainingUsd > 0.01) // Small threshold for floating point
+        .sort((a, b) => b.date - a.date); // Sort newest first for display
+      
+      console.log('\nPending withdrawals:', pendingWithdrawals.map(w => 
+        `${w.coin} $${w.remainingUsd.toFixed(2)} remaining of $${w.originalUsd.toFixed(2)}`
+      ));
+      
+      renderPendingBurnsUI(pendingWithdrawals, container);
+    }
+
+    function renderPendingBurnsUI(pendingWithdrawals, container) {
+      // Calculate total pending
+      const totalPendingUsd = pendingWithdrawals.reduce((sum, w) => sum + w.remainingUsd, 0);
+      
+      if (pendingWithdrawals.length === 0 || totalPendingUsd < 0.01) {
+        container.innerHTML = `
+          <div class="no-pending">
+            <div class="all-burned-icon">✅</div>
+            All tracked withdrawals have been burned!
+          </div>
+        `;
+        return;
+      }
       
       let html = `
         <div class="pending-header">
@@ -1498,21 +1583,19 @@
               Withdrawals Awaiting Burn
             </div>
             <div class="pending-subtitle">
-              Withdrawals after last burn (${lastBurnStr})
+              ${pendingWithdrawals.length} withdrawal${pendingWithdrawals.length !== 1 ? 's' : ''} not fully burned yet
             </div>
           </div>
           <div class="pending-total">
             <div class="pending-total-label">Total Pending</div>
             <div class="pending-total-amount">$${totalPendingUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-            <div style="color: #aa88bb; font-family: 'VT323', monospace; font-size: 14px;">${pendingWithdrawals.length} withdrawal${pendingWithdrawals.length !== 1 ? 's' : ''}</div>
           </div>
         </div>
       `;
       
       html += pendingWithdrawals.map(w => {
-        const date = w.date instanceof Date ? w.date : new Date(w.date);
-        const price = prices[w.coin] || 0;
-        const usdValue = w.amount * price;
+        const isPartial = w.remainingUsd < w.originalUsd - 0.01;
+        const burnedPercent = ((w.originalUsd - w.remainingUsd) / w.originalUsd * 100).toFixed(0);
         
         return `
           <div class="pending-item">
@@ -1520,12 +1603,17 @@
               <span class="pending-badge">${w.coin}</span>
               <div class="pending-item-info">
                 <span class="pending-amount">${w.amount.toLocaleString(undefined, { maximumFractionDigits: 8 })} ${w.coin}</span>
-                ${price > 0 ? `<span class="pending-coin">≈ $${usdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>` : ''}
+                <span class="pending-coin">
+                  ${isPartial 
+                    ? `$${w.remainingUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })} pending of $${w.originalUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })} (${burnedPercent}% burned)`
+                    : `≈ $${w.originalUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+                  }
+                </span>
               </div>
             </div>
             <div class="pending-item-right">
-              <div class="pending-date">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
-              <div class="pending-status">⏳ Awaiting burn</div>
+              <div class="pending-date">${w.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${w.date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
+              <div class="pending-status">${isPartial ? '🔥 Partially burned' : '⏳ Awaiting burn'}</div>
             </div>
           </div>
         `;
@@ -1791,9 +1879,21 @@
       document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
     }
 
-    async function fetchAllBalances() {
+    async function fetchAllBalances(forceRefresh = false) {
       const btn = document.getElementById('refresh-btn'), icon = document.getElementById('refresh-icon'), text = document.getElementById('refresh-text');
       btn.disabled = true; icon.classList.add('spinning'); text.textContent = 'Loading...';
+      
+      // Reset loaded flags for pending burns calculation
+      withdrawalsLoaded = false;
+      burnDepositsLoaded = false;
+      
+      // Show loading state for pending burns
+      document.getElementById('pending-burns').innerHTML = `
+        <div class="loading-spinner" style="justify-content: center; padding: 20px;">
+          <div class="spinner"></div>
+          <span>Calculating pending burns...</span>
+        </div>
+      `;
       
       await fetchPrices();
       for (const wallet of wallets) { await fetchBalance(wallet); await new Promise(r => setTimeout(r, 400)); }
@@ -1802,14 +1902,74 @@
       updateTotal();
       
       // Fetch withdrawals and burn deposits in background
-      fetchAllWithdrawals();
-      fetchBurnDeposits();
+      fetchAllWithdrawals(forceRefresh);
+      fetchBurnDeposits(forceRefresh);
       
       for (const wallet of quaiWallets) { await fetchQuaiWalletData(wallet, selectedTimeRange[wallet.exchange] || 1); await new Promise(r => setTimeout(r, 400)); }
       
       updateTotal();
       btn.disabled = false; icon.classList.remove('spinning'); text.textContent = 'Refresh';
     }
+
+    // Manual refresh button handler - forces cache bypass
+    function manualRefresh() {
+      resetRefreshCountdown();
+      fetchAllBalances(true);
+    }
+
+    // Update burn refresh indicator
+    function updateBurnRefreshIndicator() {
+      const el = document.getElementById('burn-auto-refresh');
+      if (el && lastBurnRefreshTime) {
+        const timeStr = lastBurnRefreshTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        el.textContent = `(last: ${timeStr}, auto-refreshes every 5min)`;
+      }
+    }
+
+    // Auto-refresh countdown
+    const AUTO_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
+    let nextRefreshTime = Date.now() + AUTO_REFRESH_INTERVAL;
+
+    function resetRefreshCountdown() {
+      nextRefreshTime = Date.now() + AUTO_REFRESH_INTERVAL;
+    }
+
+    function updateRefreshCountdown() {
+      const remaining = Math.max(0, nextRefreshTime - Date.now());
+      const minutes = Math.floor(remaining / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+      const el = document.getElementById('next-refresh');
+      if (el) {
+        el.textContent = `Auto-refresh in ${minutes}:${seconds.toString().padStart(2, '0')}`;
+      }
+    }
+
+    // Update countdown every second
+    setInterval(updateRefreshCountdown, 1000);
+
+    // Auto-refresh every 5 minutes
+    setInterval(async () => {
+      console.log('Auto-refreshing data...');
+      resetRefreshCountdown();
+      
+      // Reset loaded flags
+      withdrawalsLoaded = false;
+      burnDepositsLoaded = false;
+      
+      // Show loading for pending burns
+      document.getElementById('pending-burns').innerHTML = `
+        <div class="loading-spinner" style="justify-content: center; padding: 20px;">
+          <div class="spinner"></div>
+          <span>Auto-refreshing...</span>
+        </div>
+      `;
+      
+      // Refresh burn deposits and withdrawals (force refresh to bypass cache)
+      await Promise.all([
+        fetchBurnDeposits(true),
+        fetchAllWithdrawals(true)
+      ]);
+    }, AUTO_REFRESH_INTERVAL);
 
     renderWallets();
     renderQuaiWallets();
