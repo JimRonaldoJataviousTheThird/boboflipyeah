@@ -887,6 +887,64 @@
       return { balance: data.balance / 1e8, source: 'BlockCypher' };
     }
 
+    // Fetch historical price for a specific coin at a specific date
+    async function fetchHistoricalCoinPrice(geckoId, date) {
+      try {
+        // Format date as dd-mm-yyyy for CoinGecko
+        const d = new Date(date);
+        const dateStr = `${d.getDate().toString().padStart(2, '0')}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getFullYear()}`;
+        
+        const url = `https://api.coingecko.com/api/v3/coins/${geckoId}/history?date=${dateStr}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.market_data && data.market_data.current_price && data.market_data.current_price.usd) {
+          return data.market_data.current_price.usd;
+        }
+        return null;
+      } catch (err) {
+        console.error(`Failed to fetch historical price for ${geckoId}:`, err);
+        return null;
+      }
+    }
+
+    // Fetch historical QUAI prices for a date range
+    async function fetchHistoricalQuaiPrices(startTimestamp, endTimestamp) {
+      try {
+        // CoinGecko market_chart/range endpoint
+        const url = `https://api.coingecko.com/api/v3/coins/quai-network/market_chart/range?vs_currency=usd&from=${Math.floor(startTimestamp/1000)}&to=${Math.floor(endTimestamp/1000)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.prices && Array.isArray(data.prices)) {
+          console.log(`Fetched ${data.prices.length} historical QUAI price points`);
+          return data.prices; // Array of [timestamp_ms, price]
+        }
+        return null;
+      } catch (err) {
+        console.error('Failed to fetch historical QUAI prices:', err);
+        return null;
+      }
+    }
+
+    // Find the closest price to a given timestamp
+    function findPriceAtTime(priceHistory, targetTimestamp) {
+      if (!priceHistory || priceHistory.length === 0) return null;
+      
+      let closest = priceHistory[0];
+      let closestDiff = Math.abs(priceHistory[0][0] - targetTimestamp);
+      
+      for (const [ts, price] of priceHistory) {
+        const diff = Math.abs(ts - targetTimestamp);
+        if (diff < closestDiff) {
+          closestDiff = diff;
+          closest = [ts, price];
+        }
+      }
+      
+      return closest[1]; // Return the price
+    }
+
     // Burn wallet tracking functions
     async function fetchBurnWalletBalance() {
       try {
@@ -1004,6 +1062,31 @@
         if (deposits.length === 0) {
           console.log('Attempting RPC-based transaction discovery...');
           deposits = await fetchBurnDepositsViaRPC();
+        }
+        
+        // Fetch historical QUAI prices for the burn timestamps
+        if (deposits.length > 0) {
+          const timestamps = deposits.map(d => d.date.getTime());
+          const minTime = Math.min(...timestamps) - (24 * 60 * 60 * 1000); // 1 day buffer before
+          const maxTime = Math.max(...timestamps) + (24 * 60 * 60 * 1000); // 1 day buffer after
+          
+          const priceHistory = await fetchHistoricalQuaiPrices(minTime, maxTime);
+          
+          if (priceHistory) {
+            // Attach historical USD value to each deposit
+            deposits = deposits.map(d => {
+              const priceAtTime = findPriceAtTime(priceHistory, d.date.getTime());
+              const usdValueAtTime = priceAtTime ? d.amount * priceAtTime : null;
+              console.log(`Burn ${d.txid.slice(0,8)}: ${d.amount.toFixed(2)} QUAI @ $${priceAtTime?.toFixed(4) || 'N/A'} = $${usdValueAtTime?.toFixed(2) || 'N/A'}`);
+              return {
+                ...d,
+                priceAtTime,
+                usdValueAtTime
+              };
+            });
+          } else {
+            console.log('Could not fetch historical prices, using current price as fallback');
+          }
         }
         
         // Cache the results
@@ -1149,7 +1232,10 @@
         html += deposits.map(d => {
           const date = d.date instanceof Date ? d.date : new Date(d.date);
           const fromShort = d.from ? `${d.from.slice(0, 10)}...${d.from.slice(-6)}` : 'Unknown';
-          const usdValue = d.amount * quaiPrice;
+          // Use historical price if available, otherwise current price
+          const hasHistoricalPrice = d.usdValueAtTime != null;
+          const usdValue = hasHistoricalPrice ? d.usdValueAtTime : (d.amount * quaiPrice);
+          const priceLabel = hasHistoricalPrice ? `$${usdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })} (at time)` : `≈ $${usdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })} (now)`;
           
           return `
             <div class="burn-item">
@@ -1157,7 +1243,7 @@
                 <span class="burn-badge">🔥</span>
                 <div class="burn-item-info">
                   <span class="burn-amount">+${d.amount.toLocaleString(undefined, { maximumFractionDigits: 4 })} QUAI</span>
-                  ${quaiPrice > 0 ? `<span style="color: #aa8888; font-family: 'VT323', monospace; font-size: 12px;">≈ $${usdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>` : ''}
+                  ${usdValue > 0 ? `<span style="color: #aa8888; font-family: 'VT323', monospace; font-size: 12px;">${priceLabel}</span>` : ''}
                   <span class="burn-from">From: <a href="https://quaiscan.io/address/${d.from}" target="_blank">${fromShort}</a></span>
                 </div>
               </div>
@@ -1387,9 +1473,19 @@
       // Check cache first (unless forcing refresh)
       if (!forceRefresh) {
         const cached = getCachedWithdrawals();
-        if (cached && cached.length > 0) {
-          renderWithdrawals(cached, container);
-          return;
+        if (cached) {
+          // Handle both old format (array) and new format (object with withdrawals)
+          const isNewFormat = cached.withdrawals !== undefined;
+          const withdrawals = isNewFormat ? cached.withdrawals : cached;
+          const failedApis = isNewFormat ? (cached.failedApis || []) : [];
+          const allApisSucceeded = isNewFormat ? cached.allApisSucceeded : true;
+          
+          if (withdrawals && withdrawals.length > 0 && allApisSucceeded) {
+            renderWithdrawals(withdrawals, container, failedApis);
+            return;
+          } else if (!allApisSucceeded) {
+            console.log('Cached data was incomplete, refetching...');
+          }
         }
       }
       
@@ -1404,33 +1500,132 @@
       try {
         console.log('Fetching withdrawals...');
         
-        const rvnW = await fetchRVNWithdrawals(wallets.find(w => w.coin === 'RVN').address);
-        console.log('RVN withdrawals:', rvnW);
+        // Track which APIs succeeded
+        const apiResults = { RVN: null, BCH: null, LTC: null, DOGE: null };
+        const failedApis = [];
         
-        const bchW = await fetchBCHWithdrawals(wallets.find(w => w.coin === 'BCH').address);
-        console.log('BCH withdrawals:', bchW);
+        try {
+          apiResults.RVN = await fetchRVNWithdrawals(wallets.find(w => w.coin === 'RVN').address);
+          console.log('RVN withdrawals:', apiResults.RVN);
+        } catch (e) {
+          console.error('RVN API failed:', e);
+          failedApis.push('RVN');
+          apiResults.RVN = [];
+        }
         
-        const ltcW = await fetchLTCWithdrawals(wallets.find(w => w.coin === 'LTC').address);
-        console.log('LTC withdrawals:', ltcW);
+        try {
+          apiResults.BCH = await fetchBCHWithdrawals(wallets.find(w => w.coin === 'BCH').address);
+          console.log('BCH withdrawals:', apiResults.BCH);
+        } catch (e) {
+          console.error('BCH API failed:', e);
+          failedApis.push('BCH');
+          apiResults.BCH = [];
+        }
         
-        const dogeW = await fetchDOGEWithdrawals(wallets.find(w => w.coin === 'DOGE').address);
-        console.log('DOGE withdrawals:', dogeW);
+        try {
+          apiResults.LTC = await fetchLTCWithdrawals(wallets.find(w => w.coin === 'LTC').address);
+          console.log('LTC withdrawals:', apiResults.LTC);
+        } catch (e) {
+          console.error('LTC API failed:', e);
+          failedApis.push('LTC');
+          apiResults.LTC = [];
+        }
         
-        const allWithdrawals = [...rvnW, ...bchW, ...ltcW, ...dogeW]
+        try {
+          apiResults.DOGE = await fetchDOGEWithdrawals(wallets.find(w => w.coin === 'DOGE').address);
+          console.log('DOGE withdrawals:', apiResults.DOGE);
+        } catch (e) {
+          console.error('DOGE API failed:', e);
+          failedApis.push('DOGE');
+          apiResults.DOGE = [];
+        }
+        
+        // Check if any API returned empty (might be failure)
+        if (apiResults.RVN.length === 0) failedApis.push('RVN');
+        if (apiResults.BCH.length === 0 && !failedApis.includes('BCH')) failedApis.push('BCH');
+        if (apiResults.LTC.length === 0 && !failedApis.includes('LTC')) failedApis.push('LTC');
+        if (apiResults.DOGE.length === 0 && !failedApis.includes('DOGE')) failedApis.push('DOGE');
+        
+        // Remove duplicates
+        const uniqueFailedApis = [...new Set(failedApis)];
+        
+        let allWithdrawals = [...apiResults.RVN, ...apiResults.BCH, ...apiResults.LTC, ...apiResults.DOGE]
           .filter(w => w.date && !isNaN(w.date.getTime()))
           .sort((a, b) => b.date - a.date)
           .slice(0, 20);
         
         console.log('All withdrawals:', allWithdrawals);
+        if (uniqueFailedApis.length > 0) {
+          console.warn('Some APIs may have failed or returned empty:', uniqueFailedApis);
+        }
+        
+        // Fetch historical prices for each withdrawal
+        if (allWithdrawals.length > 0) {
+          container.innerHTML = `
+            <div class="loading-spinner" style="justify-content: center; padding: 20px;">
+              <div class="spinner"></div>
+              <span>Fetching historical prices...</span>
+            </div>
+          `;
+          
+          // Get unique coin/date combinations to minimize API calls
+          const coinGeckoIds = {
+            'RVN': 'ravencoin',
+            'BCH': 'bitcoin-cash', 
+            'LTC': 'litecoin',
+            'DOGE': 'dogecoin'
+          };
+          
+          // Group by coin and date (day granularity) to avoid duplicate API calls
+          const priceCache = {};
+          
+          for (let i = 0; i < allWithdrawals.length; i++) {
+            const w = allWithdrawals[i];
+            const geckoId = coinGeckoIds[w.coin];
+            const dateKey = w.date.toISOString().split('T')[0]; // YYYY-MM-DD
+            const cacheKey = `${w.coin}_${dateKey}`;
+            
+            if (!priceCache[cacheKey]) {
+              console.log(`Fetching historical price for ${w.coin} on ${dateKey}...`);
+              const price = await fetchHistoricalCoinPrice(geckoId, w.date);
+              priceCache[cacheKey] = price;
+              // Small delay to avoid rate limiting
+              await new Promise(r => setTimeout(r, 300));
+            }
+            
+            const historicalPrice = priceCache[cacheKey];
+            if (historicalPrice) {
+              allWithdrawals[i] = {
+                ...w,
+                priceAtTime: historicalPrice,
+                usdValueAtTime: w.amount * historicalPrice
+              };
+              console.log(`${w.coin} withdrawal: ${w.amount.toFixed(4)} @ $${historicalPrice.toFixed(4)} = $${(w.amount * historicalPrice).toFixed(2)}`);
+            }
+          }
+        }
+        
+        // Only cache if all APIs succeeded (no empty results except genuinely no withdrawals)
+        const allApisSucceeded = uniqueFailedApis.length === 0;
         
         // Cache the results (convert dates to ISO strings for serialization)
-        const cacheData = allWithdrawals.map(w => ({
-          ...w,
-          date: w.date.toISOString()
-        }));
-        setCachedWithdrawals(cacheData);
+        const cacheData = {
+          withdrawals: allWithdrawals.map(w => ({
+            ...w,
+            date: w.date.toISOString()
+          })),
+          allApisSucceeded,
+          failedApis: uniqueFailedApis
+        };
         
-        renderWithdrawals(allWithdrawals, container);
+        // Only cache if we got complete data, or cache for shorter time if incomplete
+        if (allApisSucceeded) {
+          setCachedWithdrawals(cacheData);
+        } else {
+          console.log('Not caching incomplete withdrawal data - some APIs failed');
+        }
+        
+        renderWithdrawals(allWithdrawals, container, uniqueFailedApis);
         
       } catch (err) {
         console.error('Failed to fetch withdrawals:', err);
@@ -1440,7 +1635,7 @@
       }
     }
 
-    function renderWithdrawals(withdrawals, container) {
+    function renderWithdrawals(withdrawals, container, failedApis = []) {
       // Store for pending burns calculation
       loadedWithdrawals = withdrawals;
       withdrawalsLoaded = true;
@@ -1453,15 +1648,32 @@
         return;
       }
       
-      container.innerHTML = withdrawals.map(w => {
+      // Show warning if some APIs failed
+      let warningHtml = '';
+      if (failedApis.length > 0) {
+        warningHtml = `
+          <div style="background: #3d2020; border: 1px solid #6b3333; padding: 10px 16px; margin-bottom: 8px; color: #ffaaaa; font-family: 'VT323', monospace; font-size: 14px;">
+            ⚠️ Warning: ${failedApis.join(', ')} withdrawal data may be incomplete. Pending burns calculation may be inaccurate.
+          </div>
+        `;
+      }
+      
+      container.innerHTML = warningHtml + withdrawals.map(w => {
         const date = w.date instanceof Date ? w.date : new Date(w.date);
+        const hasHistoricalPrice = w.usdValueAtTime != null;
+        const currentPrice = prices[w.coin] || 0;
+        const usdValue = hasHistoricalPrice ? w.usdValueAtTime : (w.amount * currentPrice);
+        const priceLabel = hasHistoricalPrice 
+          ? `$${usdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })} (at time)` 
+          : (currentPrice > 0 ? `≈ $${usdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })} (now)` : '');
+        
         return `
           <div class="withdrawal-item">
             <div class="withdrawal-left">
               <span class="withdrawal-coin-badge">${w.coin}</span>
               <div class="withdrawal-info">
                 <span class="withdrawal-amount">-${w.amount.toLocaleString(undefined, { maximumFractionDigits: 8 })} ${w.coin}</span>
-                <span class="withdrawal-to">Sent from wallet</span>
+                ${priceLabel ? `<span class="withdrawal-to">${priceLabel}</span>` : '<span class="withdrawal-to">Sent from wallet</span>'}
               </div>
             </div>
             <div class="withdrawal-right">
@@ -1492,37 +1704,47 @@
       }
       
       // Convert withdrawals to USD and add remaining balance tracking
+      // Use historical price (usdValueAtTime) if available, otherwise fall back to current price
       const withdrawalsWithBalance = loadedWithdrawals.map(w => {
         const date = w.date instanceof Date ? w.date : new Date(w.date);
-        const price = prices[w.coin] || 0;
-        const usdValue = w.amount * price;
+        const currentPrice = prices[w.coin] || 0;
+        // Prefer historical price, fall back to current price
+        const usdValue = w.usdValueAtTime != null ? w.usdValueAtTime : (w.amount * currentPrice);
+        const usedHistoricalPrice = w.usdValueAtTime != null;
         return {
           ...w,
           date,
           usdValue,
+          usedHistoricalPrice,
           remainingUsd: usdValue, // Track how much hasn't been burned yet
           originalUsd: usdValue
         };
       }).sort((a, b) => a.date - b.date); // Sort oldest first
       
-      // Convert burns to USD
+      // Convert burns to USD - only use 4 most recent burns
+      // Use historical price (usdValueAtTime) if available, otherwise fall back to current price
       const quaiPrice = prices['QUAI'] || 0;
       const burnsWithUsd = loadedBurnDeposits.map(b => {
         const date = b.date instanceof Date ? b.date : new Date(b.date);
-        const usdValue = b.amount * quaiPrice;
+        // Prefer historical price, fall back to current price
+        const usdValue = b.usdValueAtTime != null ? b.usdValueAtTime : (b.amount * quaiPrice);
+        const usedHistoricalPrice = b.usdValueAtTime != null;
         return {
           ...b,
           date,
-          usdValue
+          usdValue,
+          usedHistoricalPrice
         };
-      }).sort((a, b) => a.date - b.date); // Sort oldest first
+      }).sort((a, b) => b.date - a.date) // Sort newest first
+        .slice(0, 4) // Only take 4 most recent burns
+        .sort((a, b) => a.date - b.date); // Re-sort oldest first for processing
       
       console.log('=== Pending Burns Calculation ===');
       console.log('Withdrawals (oldest first):', withdrawalsWithBalance.map(w => 
-        `${w.coin} $${w.usdValue.toFixed(2)} @ ${w.date.toLocaleString()}`
+        `${w.coin} $${w.usdValue.toFixed(2)} ${w.usedHistoricalPrice ? '(historical)' : '(current)'} @ ${w.date.toLocaleString()}`
       ));
-      console.log('Burns (oldest first):', burnsWithUsd.map(b => 
-        `$${b.usdValue.toFixed(2)} @ ${b.date.toLocaleString()}`
+      console.log('Burns (4 most recent, oldest first for processing):', burnsWithUsd.map(b => 
+        `$${b.usdValue.toFixed(2)} ${b.usedHistoricalPrice ? '(historical)' : '(current)'} @ ${b.date.toLocaleString()}`
       ));
       
       // Process each burn - deduct from oldest withdrawals that happened BEFORE the burn
@@ -1583,7 +1805,7 @@
               Withdrawals Awaiting Burn
             </div>
             <div class="pending-subtitle">
-              ${pendingWithdrawals.length} withdrawal${pendingWithdrawals.length !== 1 ? 's' : ''} not fully burned yet
+              ${pendingWithdrawals.length} withdrawal${pendingWithdrawals.length !== 1 ? 's' : ''} not fully burned yet (using historical prices)
             </div>
           </div>
           <div class="pending-total">
@@ -1596,6 +1818,7 @@
       html += pendingWithdrawals.map(w => {
         const isPartial = w.remainingUsd < w.originalUsd - 0.01;
         const burnedPercent = ((w.originalUsd - w.remainingUsd) / w.originalUsd * 100).toFixed(0);
+        const priceSource = w.usedHistoricalPrice ? 'at time' : 'current';
         
         return `
           <div class="pending-item">
@@ -1605,8 +1828,8 @@
                 <span class="pending-amount">${w.amount.toLocaleString(undefined, { maximumFractionDigits: 8 })} ${w.coin}</span>
                 <span class="pending-coin">
                   ${isPartial 
-                    ? `$${w.remainingUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })} pending of $${w.originalUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })} (${burnedPercent}% burned)`
-                    : `≈ $${w.originalUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+                    ? `$${w.remainingUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })} pending of $${w.originalUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })} (${burnedPercent}% burned, ${priceSource})`
+                    : `$${w.originalUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })} (${priceSource})`
                   }
                 </span>
               </div>
