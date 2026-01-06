@@ -580,13 +580,73 @@
     .footer-ornament { color: #ff6666; letter-spacing: 4px; margin-bottom: 12px; }
 
     @media (max-width: 640px) { 
-      h1 { font-size: 2rem; } 
-      .total-amount { font-size: 2.5rem; } 
-      .wallet-inner { flex-direction: column; align-items: flex-start; } 
-      .wallet-right { text-align: left; }
-      .chart-header { flex-direction: column; align-items: flex-start; }
-      .burn-header { flex-direction: column; align-items: flex-start; }
-      .burn-total { text-align: left; margin-top: 8px; }
+      .container { padding: 24px 12px; }
+      
+      h1 { font-size: 1.8rem; letter-spacing: 2px; } 
+      .subtitle { font-size: 0.85rem; letter-spacing: 2px; }
+      .ornament { font-size: 18px; letter-spacing: 4px; }
+      
+      .total-card { padding: 20px 16px; }
+      .total-amount { font-size: 2.2rem; } 
+      .total-label { font-size: 12px; letter-spacing: 2px; }
+      
+      .refresh-btn { padding: 12px 20px; font-size: 12px; }
+      
+      .section-title { font-size: 1.2rem; letter-spacing: 2px; }
+      
+      .wallet-card { padding: 16px; }
+      .wallet-inner { flex-direction: column; align-items: flex-start; gap: 12px; } 
+      .wallet-right { text-align: left; width: 100%; }
+      .wallet-balance { font-size: 1.8rem; }
+      .wallet-address { font-size: 12px; }
+      .coin-icon-wrapper { width: 40px; height: 40px; }
+      .coin-icon { width: 24px; height: 24px; }
+      
+      .chart-container { padding: 12px; }
+      .chart-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .chart-title { font-size: 14px; }
+      .time-range-buttons { width: 100%; justify-content: space-between; }
+      .time-btn { padding: 6px 10px; font-size: 14px; flex: 1; text-align: center; }
+      
+      /* Withdrawals mobile */
+      .withdrawals-container { padding: 12px; }
+      .withdrawal-item { padding: 10px 12px; flex-direction: column; align-items: flex-start; gap: 8px; }
+      .withdrawal-left { width: 100%; }
+      .withdrawal-right { width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+      .withdrawal-amount { font-size: 1.1rem; }
+      .withdrawal-coin-badge { font-size: 14px; min-width: 45px; }
+      
+      /* Burn section mobile */
+      .burn-container { padding: 12px; }
+      .burn-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .burn-total { text-align: left; margin-top: 8px; width: 100%; }
+      .burn-total-amount { font-size: 1.5rem; }
+      .burn-item { padding: 10px 12px; flex-direction: column; align-items: flex-start; gap: 8px; }
+      .burn-item-left { width: 100%; }
+      .burn-item-right { width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+      .burn-amount { font-size: 1.1rem; }
+      .burn-wallet-address { font-size: 11px; }
+      
+      /* Pending burns mobile */
+      .pending-container { padding: 12px; }
+      .pending-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .pending-total { text-align: left; width: 100%; }
+      .pending-total-amount { font-size: 1.5rem; }
+      .pending-item { padding: 10px 12px; flex-direction: column; align-items: flex-start; gap: 8px; }
+      .pending-item-left { width: 100%; }
+      .pending-item-right { width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+      .pending-amount { font-size: 1.1rem; }
+      
+      /* Footer mobile */
+      footer { font-size: 12px; }
+      .footer-ornament { font-size: 14px; }
+    }
+    
+    @media (max-width: 400px) {
+      h1 { font-size: 1.5rem; }
+      .total-amount { font-size: 1.8rem; }
+      .wallet-balance { font-size: 1.5rem; }
+      .time-btn { padding: 5px 6px; font-size: 12px; }
     }
   </style>
 </head>
@@ -661,7 +721,39 @@
   </div>
 
   <script>
-    const CORS_PROXY = 'https://corsproxy.io/?';
+    const CORS_PROXIES = [
+      'https://corsproxy.io/?',
+      'https://api.allorigins.win/raw?url=',
+      'https://proxy.cors.sh/'
+    ];
+    let currentProxyIndex = 0;
+    
+    // Helper function to fetch with CORS proxy fallback
+    async function fetchWithProxy(url) {
+      for (let i = 0; i < CORS_PROXIES.length; i++) {
+        const proxyIndex = (currentProxyIndex + i) % CORS_PROXIES.length;
+        const proxy = CORS_PROXIES[proxyIndex];
+        try {
+          const response = await fetch(`${proxy}${encodeURIComponent(url)}`);
+          const data = await response.json();
+          
+          // Check if rate limited
+          if (data.message && data.message.includes('Rate limit')) {
+            console.log(`Proxy ${proxy} rate limited, trying next...`);
+            continue;
+          }
+          
+          // Success - remember this proxy for next time
+          currentProxyIndex = proxyIndex;
+          return data;
+        } catch (e) {
+          console.log(`Proxy ${proxy} failed:`, e.message);
+        }
+      }
+      throw new Error('All CORS proxies failed');
+    }
+    
+    const CORS_PROXY = CORS_PROXIES[0]; // Keep for backwards compatibility
     const BURN_WALLET = '0x0050AF0000000000000000000000000000000000';
     
     const wallets = [
@@ -866,24 +958,46 @@
     }
 
     async function fetchRVN(address) {
-      const data = await (await fetch(`${CORS_PROXY}${encodeURIComponent(`https://rvn.cryptoscope.io/api/getaddress/?address=${address}`)}`)).json();
+      const data = await fetchWithProxy(`https://rvn.cryptoscope.io/api/getaddress/?address=${address}`);
       if (data?.balance !== undefined) return { balance: parseFloat(data.balance), source: 'CryptoScope' };
       throw new Error('RVN API failed');
     }
 
     async function fetchBCH(address) {
-      const data = await (await fetch(`${CORS_PROXY}${encodeURIComponent(`https://bchn.fullstack.cash/v5/electrumx/balance/bitcoincash:${address}`)}`)).json();
+      const data = await fetchWithProxy(`https://bchn.fullstack.cash/v5/electrumx/balance/bitcoincash:${address}`);
       if (data.balance?.confirmed !== undefined) return { balance: (data.balance.confirmed + (data.balance.unconfirmed || 0)) / 1e8, source: 'FullStack.cash' };
       throw new Error('BCH API failed');
     }
 
     async function fetchLTC(address) {
-      const data = await (await fetch(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}/balance`)).json();
+      // Try direct first, then proxy
+      try {
+        const response = await fetch(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}/balance`);
+        if (response.ok) {
+          const data = await response.json();
+          return { balance: data.balance / 1e8, source: 'BlockCypher' };
+        }
+      } catch (e) {
+        console.log('LTC direct fetch failed, trying proxy...');
+      }
+      // Fallback to proxy
+      const data = await fetchWithProxy(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}/balance`);
       return { balance: data.balance / 1e8, source: 'BlockCypher' };
     }
 
     async function fetchDOGE(address) {
-      const data = await (await fetch(`https://api.blockcypher.com/v1/doge/main/addrs/${address}/balance`)).json();
+      // Try direct first, then proxy
+      try {
+        const response = await fetch(`https://api.blockcypher.com/v1/doge/main/addrs/${address}/balance`);
+        if (response.ok) {
+          const data = await response.json();
+          return { balance: data.balance / 1e8, source: 'BlockCypher' };
+        }
+      } catch (e) {
+        console.log('DOGE direct fetch failed, trying proxy...');
+      }
+      // Fallback to proxy
+      const data = await fetchWithProxy(`https://api.blockcypher.com/v1/doge/main/addrs/${address}/balance`);
       return { balance: data.balance / 1e8, source: 'BlockCypher' };
     }
 
@@ -1010,9 +1124,7 @@
         
         // Try the Blockscout-style API (common for EVM explorers)
         try {
-          const apiUrl = `${CORS_PROXY}${encodeURIComponent(`https://quaiscan.io/api?module=account&action=txlist&address=${BURN_WALLET}&sort=desc&page=1&offset=10`)}`;
-          const response = await fetch(apiUrl);
-          const data = await response.json();
+          const data = await fetchWithProxy(`https://quaiscan.io/api?module=account&action=txlist&address=${BURN_WALLET}&sort=desc&page=1&offset=10`);
           
           console.log('QuaiScan API response:', data);
           
@@ -1035,9 +1147,7 @@
         // If first API didn't work, try v2 API format
         if (deposits.length === 0) {
           try {
-            const apiUrl = `${CORS_PROXY}${encodeURIComponent(`https://quaiscan.io/api/v2/addresses/${BURN_WALLET}/transactions?type=coin_transfer`)}`;
-            const response = await fetch(apiUrl);
-            const data = await response.json();
+            const data = await fetchWithProxy(`https://quaiscan.io/api/v2/addresses/${BURN_WALLET}/transactions?type=coin_transfer`);
             
             console.log('QuaiScan v2 API response:', data);
             
@@ -1262,63 +1372,46 @@
     // Withdrawal tracking functions
     async function fetchRVNWithdrawals(address) {
       try {
-        // Fetch multiple pages to find withdrawals
+        // Fetch 400 transactions to find withdrawals
         const withdrawals = [];
         let foundWithdrawals = 0;
         
-        for (let page = 1; page <= 20 && foundWithdrawals < 5; page++) {
-          const url = `${CORS_PROXY}${encodeURIComponent(`https://blockbook.ravencoin.org/api/v2/address/${address}?details=txids&pageSize=20&page=${page}`)}`;
-          const response = await fetch(url);
+        const data = await fetchWithProxy(`https://blockbook.ravencoin.org/api/v2/address/${address}?details=txids&pageSize=400&page=1`);
+        console.log('RVN Blockbook:', data.txids?.length, 'txids');
+        
+        if (!data || !data.txids || data.txids.length === 0) return [];
+        
+        // Check each transaction
+        for (const txid of data.txids) {
+          if (foundWithdrawals >= 20) break; // Limit total withdrawals found
           
-          if (!response.ok) {
-            console.log('RVN Blockbook page', page, 'not ok:', response.status);
-            break;
-          }
-          
-          const data = await response.json();
-          console.log('RVN Blockbook page', page, ':', data.txids?.length, 'txids');
-          
-          if (!data || !data.txids || data.txids.length === 0) break;
-          
-          // Check each transaction
-          for (const txid of data.txids) {
-            if (foundWithdrawals >= 10) break; // Limit total withdrawals found
+          try {
+            const tx = await fetchWithProxy(`https://blockbook.ravencoin.org/api/v2/tx/${txid}`);
             
-            try {
-              const txUrl = `${CORS_PROXY}${encodeURIComponent(`https://blockbook.ravencoin.org/api/v2/tx/${txid}`)}`;
-              const txResponse = await fetch(txUrl);
+            // Check if our address is in vin (inputs = we're sending)
+            const isInput = tx.vin?.some(vin => vin.addresses?.includes(address));
+            
+            if (isInput) {
+              // Calculate amount sent to other addresses
+              const sentAmount = tx.vout
+                ?.filter(vout => !vout.addresses?.includes(address))
+                .reduce((sum, vout) => sum + parseInt(vout.value || 0), 0) || 0;
               
-              if (!txResponse.ok) continue;
-              
-              const tx = await txResponse.json();
-              
-              // Check if our address is in vin (inputs = we're sending)
-              const isInput = tx.vin?.some(vin => vin.addresses?.includes(address));
-              
-              if (isInput) {
-                // Calculate amount sent to other addresses
-                const sentAmount = tx.vout
-                  ?.filter(vout => !vout.addresses?.includes(address))
-                  .reduce((sum, vout) => sum + parseInt(vout.value || 0), 0) || 0;
-                
-                if (sentAmount > 0) {
-                  console.log('RVN withdrawal found:', txid.slice(0, 10), sentAmount / 1e8);
-                  withdrawals.push({
-                    coin: 'RVN',
-                    amount: sentAmount / 1e8,
-                    date: new Date(tx.blockTime * 1000),
-                    txid: tx.txid,
-                    explorer: `https://blockbook.ravencoin.org/tx/${tx.txid}`
-                  });
-                  foundWithdrawals++;
-                }
+              if (sentAmount > 0) {
+                console.log('RVN withdrawal found:', txid.slice(0, 10), sentAmount / 1e8);
+                withdrawals.push({
+                  coin: 'RVN',
+                  amount: sentAmount / 1e8,
+                  date: new Date(tx.blockTime * 1000),
+                  txid: tx.txid,
+                  explorer: `https://blockbook.ravencoin.org/tx/${tx.txid}`
+                });
+                foundWithdrawals++;
               }
-              
-              await new Promise(r => setTimeout(r, 100));
-            } catch (e) { console.error('RVN tx fetch error:', e); }
-          }
-          
-          await new Promise(r => setTimeout(r, 200));
+            }
+            
+            await new Promise(r => setTimeout(r, 100));
+          } catch (e) { console.error('RVN tx fetch error:', e); }
         }
         
         console.log('RVN total withdrawals found:', withdrawals.length);
@@ -1330,9 +1423,7 @@
       try {
         const fullAddress = `bitcoincash:${address}`;
         // Get transaction history from FullStack
-        const url = `${CORS_PROXY}${encodeURIComponent(`https://bchn.fullstack.cash/v5/electrumx/transactions/${fullAddress}`)}`;
-        const response = await fetch(url);
-        const data = await response.json();
+        const data = await fetchWithProxy(`https://bchn.fullstack.cash/v5/electrumx/transactions/${fullAddress}`);
         
         console.log('BCH tx list:', data);
         
@@ -1342,9 +1433,7 @@
         // Get details for recent transactions
         for (const tx of data.transactions.slice(0, 6)) {
           try {
-            const txUrl = `${CORS_PROXY}${encodeURIComponent(`https://bchn.fullstack.cash/v5/electrumx/tx/data/${tx.tx_hash}`)}`;
-            const txResponse = await fetch(txUrl);
-            const txResult = await txResponse.json();
+            const txResult = await fetchWithProxy(`https://bchn.fullstack.cash/v5/electrumx/tx/data/${tx.tx_hash}`);
             
             // Data is nested in 'details' object
             const txData = txResult.details || txResult;
@@ -1389,8 +1478,20 @@
 
     async function fetchLTCWithdrawals(address) {
       try {
-        const response = await fetch(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}/full?limit=20`);
-        const data = await response.json();
+        let data;
+        // Try direct first, then proxy
+        try {
+          const response = await fetch(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}/full?limit=20`);
+          if (response.ok) {
+            data = await response.json();
+          } else {
+            throw new Error('Direct fetch failed');
+          }
+        } catch (e) {
+          console.log('LTC withdrawals direct fetch failed, trying proxy...');
+          data = await fetchWithProxy(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}/full?limit=20`);
+        }
+        
         console.log('LTC full tx data:', data);
         if (!data || !data.txs) return [];
         
@@ -1424,8 +1525,20 @@
 
     async function fetchDOGEWithdrawals(address) {
       try {
-        const response = await fetch(`https://api.blockcypher.com/v1/doge/main/addrs/${address}/full?limit=20`);
-        const data = await response.json();
+        let data;
+        // Try direct first, then proxy
+        try {
+          const response = await fetch(`https://api.blockcypher.com/v1/doge/main/addrs/${address}/full?limit=20`);
+          if (response.ok) {
+            data = await response.json();
+          } else {
+            throw new Error('Direct fetch failed');
+          }
+        } catch (e) {
+          console.log('DOGE withdrawals direct fetch failed, trying proxy...');
+          data = await fetchWithProxy(`https://api.blockcypher.com/v1/doge/main/addrs/${address}/full?limit=20`);
+        }
+        
         console.log('DOGE full tx data:', data);
         if (!data || !data.txs) return [];
         
@@ -1559,52 +1672,6 @@
           console.warn('Some APIs may have failed or returned empty:', uniqueFailedApis);
         }
         
-        // Fetch historical prices for each withdrawal
-        if (allWithdrawals.length > 0) {
-          container.innerHTML = `
-            <div class="loading-spinner" style="justify-content: center; padding: 20px;">
-              <div class="spinner"></div>
-              <span>Fetching historical prices...</span>
-            </div>
-          `;
-          
-          // Get unique coin/date combinations to minimize API calls
-          const coinGeckoIds = {
-            'RVN': 'ravencoin',
-            'BCH': 'bitcoin-cash', 
-            'LTC': 'litecoin',
-            'DOGE': 'dogecoin'
-          };
-          
-          // Group by coin and date (day granularity) to avoid duplicate API calls
-          const priceCache = {};
-          
-          for (let i = 0; i < allWithdrawals.length; i++) {
-            const w = allWithdrawals[i];
-            const geckoId = coinGeckoIds[w.coin];
-            const dateKey = w.date.toISOString().split('T')[0]; // YYYY-MM-DD
-            const cacheKey = `${w.coin}_${dateKey}`;
-            
-            if (!priceCache[cacheKey]) {
-              console.log(`Fetching historical price for ${w.coin} on ${dateKey}...`);
-              const price = await fetchHistoricalCoinPrice(geckoId, w.date);
-              priceCache[cacheKey] = price;
-              // Small delay to avoid rate limiting
-              await new Promise(r => setTimeout(r, 300));
-            }
-            
-            const historicalPrice = priceCache[cacheKey];
-            if (historicalPrice) {
-              allWithdrawals[i] = {
-                ...w,
-                priceAtTime: historicalPrice,
-                usdValueAtTime: w.amount * historicalPrice
-              };
-              console.log(`${w.coin} withdrawal: ${w.amount.toFixed(4)} @ $${historicalPrice.toFixed(4)} = $${(w.amount * historicalPrice).toFixed(2)}`);
-            }
-          }
-        }
-        
         // Only cache if all APIs succeeded (no empty results except genuinely no withdrawals)
         const allApisSucceeded = uniqueFailedApis.length === 0;
         
@@ -1660,12 +1727,9 @@
       
       container.innerHTML = warningHtml + withdrawals.map(w => {
         const date = w.date instanceof Date ? w.date : new Date(w.date);
-        const hasHistoricalPrice = w.usdValueAtTime != null;
         const currentPrice = prices[w.coin] || 0;
-        const usdValue = hasHistoricalPrice ? w.usdValueAtTime : (w.amount * currentPrice);
-        const priceLabel = hasHistoricalPrice 
-          ? `$${usdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })} (at time)` 
-          : (currentPrice > 0 ? `≈ $${usdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })} (now)` : '');
+        const usdValue = w.amount * currentPrice;
+        const priceLabel = currentPrice > 0 ? `≈ $${usdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '';
         
         return `
           <div class="withdrawal-item">
@@ -1703,19 +1767,15 @@
         return;
       }
       
-      // Convert withdrawals to USD and add remaining balance tracking
-      // Use historical price (usdValueAtTime) if available, otherwise fall back to current price
+      // Convert withdrawals to USD using current prices
       const withdrawalsWithBalance = loadedWithdrawals.map(w => {
         const date = w.date instanceof Date ? w.date : new Date(w.date);
         const currentPrice = prices[w.coin] || 0;
-        // Prefer historical price, fall back to current price
-        const usdValue = w.usdValueAtTime != null ? w.usdValueAtTime : (w.amount * currentPrice);
-        const usedHistoricalPrice = w.usdValueAtTime != null;
+        const usdValue = w.amount * currentPrice;
         return {
           ...w,
           date,
           usdValue,
-          usedHistoricalPrice,
           remainingUsd: usdValue, // Track how much hasn't been burned yet
           originalUsd: usdValue
         };
@@ -1741,7 +1801,7 @@
       
       console.log('=== Pending Burns Calculation ===');
       console.log('Withdrawals (oldest first):', withdrawalsWithBalance.map(w => 
-        `${w.coin} $${w.usdValue.toFixed(2)} ${w.usedHistoricalPrice ? '(historical)' : '(current)'} @ ${w.date.toLocaleString()}`
+        `${w.coin} $${w.usdValue.toFixed(2)} (current) @ ${w.date.toLocaleString()}`
       ));
       console.log('Burns (4 most recent, oldest first for processing):', burnsWithUsd.map(b => 
         `$${b.usdValue.toFixed(2)} ${b.usedHistoricalPrice ? '(historical)' : '(current)'} @ ${b.date.toLocaleString()}`
@@ -1805,7 +1865,7 @@
               Withdrawals Awaiting Burn
             </div>
             <div class="pending-subtitle">
-              ${pendingWithdrawals.length} withdrawal${pendingWithdrawals.length !== 1 ? 's' : ''} not fully burned yet (using historical prices)
+              ${pendingWithdrawals.length} withdrawal${pendingWithdrawals.length !== 1 ? 's' : ''} not fully burned yet
             </div>
           </div>
           <div class="pending-total">
