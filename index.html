@@ -252,7 +252,6 @@
       <p>RVN via <a href="https://cryptoscope.io" target="_blank">CryptoScope</a> • BCH via <a href="https://fullstack.cash" target="_blank">FullStack.cash</a></p>
       <p>LTC & DOGE via <a href="https://blockcypher.com" target="_blank">BlockCypher</a> • QUAI via <a href="https://rpc.quai.network" target="_blank">Quai RPC</a></p>
       <p>Burn tracking via <a href="https://quaiscan.io" target="_blank">QuaiScan</a> • Prices from <a href="https://coingecko.com" target="_blank">CoinGecko</a></p>
-      <p style="color: #aa8888; font-size: 12px;">Emissions graphs require local RPC node for full functionality</p>
     </footer>
   </div>
 
@@ -292,9 +291,9 @@
     const BURN_LAG_BLOCKS = 25920;
     const FRESH_START_BLOCK = EMISSIONS_START_BLOCK + LOCKUP_BLOCKS;
     const EMISSIONS_CACHE_DURATION = 30 * 60 * 1000;
-    // Use local RPC for emissions (HTTP only works locally, not on Vercel HTTPS)
+    // Use local RPC directly when on localhost, use Vercel API proxy on production
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const CUSTOM_RPC_URL = isLocalhost ? 'http://20.81.235.89:9200' : null;
+    const CUSTOM_RPC_URL = isLocalhost ? 'http://20.81.235.89:9200' : '/api/rpc';
     
     const wallets = [
       { coin: 'RVN', name: 'Ravencoin', address: 'RXtpH2yp6AA6VvPVTuhCrqxYG7vCGEPMB5', geckoId: 'ravencoin' },
@@ -709,9 +708,8 @@
       document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
     }
 
-    // ========== EMISSIONS FUNCTIONS (local RPC only) ==========
+    // ========== EMISSIONS FUNCTIONS ==========
     async function fetchEmissionsRpc(method, params) {
-      if (!CUSTOM_RPC_URL) return null;
       try {
         const response = await fetch(CUSTOM_RPC_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) });
         if (response.ok) return await response.json();
@@ -727,15 +725,6 @@
 
     async function fetchEmissionsVsBurnsData(forceRefresh = false) {
       const loadingEl = document.getElementById('emissions-loading'), loadingText = document.getElementById('emissions-loading-text'), progressBar = document.getElementById('emissions-progress-bar'), canvas = document.getElementById('emissions-chart');
-      
-      // Check if we're on production (no local RPC access)
-      if (!CUSTOM_RPC_URL) {
-        loadingText.textContent = 'Emissions graphs require local RPC node (run locally for full features)';
-        progressBar.style.width = '0%';
-        document.getElementById('circulating-loading').querySelector('span').textContent = 'Requires local RPC';
-        document.getElementById('aligned-loading').querySelector('span').textContent = 'Requires local RPC';
-        return;
-      }
       
       if (!forceRefresh) { const cached = getCachedEmissions(); if (cached && cached.length > 0) { emissionsData = cached; renderEmissionsChart(); renderCirculatingChart(); renderAlignedChart(); return; } }
       loadingText.textContent = 'Fetching current block...';
