@@ -75,14 +75,13 @@
     .burn-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 2px solid #4a1515; margin-bottom: 8px; flex-wrap: wrap; gap: 10px; }
     .burn-wallet-info { display: flex; flex-direction: column; gap: 4px; }
     .burn-wallet-label { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #ff9966; display: flex; align-items: center; gap: 8px; }
-    .burn-icon { font-size: 1.3rem; }
     .burn-wallet-address { font-family: 'VT323', monospace; font-size: 13px; color: #aa8888; word-break: break-all; }
     .burn-wallet-address a { color: #aa8888; text-decoration: none; }
     .burn-wallet-address a:hover { color: #ffaaaa; }
     .burn-total { text-align: right; }
     .burn-total-label { font-family: 'VT323', monospace; font-size: 12px; color: #aa8888; text-transform: uppercase; }
     .burn-total-amount { font-family: 'VT323', monospace; font-size: 1.8rem; color: #ff9966; text-shadow: 0 0 10px rgba(255, 153, 102, 0.4); }
-    .burn-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #3d1515; flex-wrap: wrap; gap: 10px; transition: background 0.2s; }
+    .burn-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #3d1515; flex-wrap: wrap; gap: 10px; }
     .burn-item:last-child { border-bottom: none; }
     .burn-item:hover { background: rgba(255, 153, 102, 0.05); }
     .burn-item-left { display: flex; align-items: center; gap: 12px; }
@@ -102,12 +101,11 @@
     .pending-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 2px solid #4a2050; margin-bottom: 8px; flex-wrap: wrap; gap: 10px; }
     .pending-info { display: flex; flex-direction: column; gap: 4px; }
     .pending-label { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #cc99ff; display: flex; align-items: center; gap: 8px; }
-    .pending-icon { font-size: 1.3rem; }
     .pending-subtitle { font-family: 'VT323', monospace; font-size: 13px; color: #aa88bb; }
     .pending-total { text-align: right; }
     .pending-total-label { font-family: 'VT323', monospace; font-size: 12px; color: #aa88bb; text-transform: uppercase; }
     .pending-total-amount { font-family: 'VT323', monospace; font-size: 1.8rem; color: #cc99ff; text-shadow: 0 0 10px rgba(204, 153, 255, 0.4); }
-    .pending-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #3d2045; flex-wrap: wrap; gap: 10px; transition: background 0.2s; }
+    .pending-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #3d2045; flex-wrap: wrap; gap: 10px; }
     .pending-item:last-child { border-bottom: none; }
     .pending-item:hover { background: rgba(204, 153, 255, 0.05); }
     .pending-item-left { display: flex; align-items: center; gap: 12px; }
@@ -132,28 +130,24 @@
     /* Emissions styles */
     .emissions-container { background: linear-gradient(135deg, #101a25 0%, #08101a 100%); border: 1px solid #205a6b; padding: 16px; margin-bottom: 20px; }
     .emissions-header { display: flex; justify-content: space-between; padding: 12px 16px; border-bottom: 2px solid #154a5a; margin-bottom: 8px; flex-wrap: wrap; gap: 10px; }
-    .emissions-label { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #66ccff; display: flex; align-items: center; gap: 8px; }
+    .emissions-label { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #66ccff; }
     .emissions-subtitle { font-family: 'VT323', monospace; font-size: 13px; color: #88aabb; }
     .emissions-stats { display: flex; gap: 30px; flex-wrap: wrap; }
     .emissions-stat { text-align: right; }
     .emissions-stat-label { font-family: 'VT323', monospace; font-size: 12px; color: #88aabb; text-transform: uppercase; }
     .emissions-stat-amount { font-family: 'VT323', monospace; font-size: 1.5rem; }
-    .emissions-stat-amount.em { color: #66ccff; }
-    .emissions-stat-amount.bu { color: #ff9966; }
-    .emissions-stat-amount.ne { color: #66ff99; }
     .emissions-chart-container { padding: 16px; background: rgba(8, 16, 26, 0.8); border: 1px solid #154050; border-radius: 4px; margin-top: 12px; }
     .emissions-chart-title { color: #88ccee; font-family: 'VT323', monospace; font-size: 18px; text-transform: uppercase; }
     .emissions-chart-wrapper { height: 300px; position: relative; }
     .emissions-chart-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: #88aabb; font-family: 'VT323', monospace; gap: 12px; }
     .emissions-progress { width: 200px; height: 8px; background: #154050; border-radius: 4px; overflow: hidden; }
-    .emissions-progress-bar { height: 100%; background: linear-gradient(90deg, #66ccff, #ff9966); }
+    .emissions-progress-bar { height: 100%; background: linear-gradient(90deg, #66ccff, #ff9966); width: 0%; transition: width 0.3s; }
     .emissions-legend { display: flex; justify-content: center; gap: 24px; margin-top: 12px; flex-wrap: wrap; }
     .legend-item { display: flex; align-items: center; gap: 8px; font-family: 'VT323', monospace; font-size: 14px; color: #aaccdd; }
     .legend-color { width: 16px; height: 4px; border-radius: 2px; }
-    /* Circulating styles */
     .circulating-container { background: linear-gradient(135deg, #1a2510 0%, #101a08 100%); border: 1px solid #4a6b20; padding: 16px; margin-bottom: 20px; }
     .circulating-header { display: flex; justify-content: space-between; padding: 12px 16px; border-bottom: 2px solid #3a5a14; margin-bottom: 8px; flex-wrap: wrap; gap: 10px; }
-    .circulating-label { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #99ff66; display: flex; align-items: center; gap: 8px; }
+    .circulating-label { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #99ff66; }
     .circulating-subtitle { font-family: 'VT323', monospace; font-size: 13px; color: #88bb88; }
     .circulating-stats { display: flex; gap: 30px; flex-wrap: wrap; }
     .circulating-stat { text-align: right; }
@@ -167,12 +161,7 @@
     footer a { color: #ffccaa; text-decoration: none; border-bottom: 1px dotted #ffccaa; }
     footer a:hover { color: #ffffff; }
     .footer-ornament { color: #ff6666; letter-spacing: 4px; margin-bottom: 12px; }
-    @media (max-width: 640px) { 
-      .container { padding: 24px 12px; } h1 { font-size: 1.8rem; } .total-amount { font-size: 2.2rem; } 
-      .wallet-inner { flex-direction: column; align-items: flex-start; } .wallet-right { text-align: left; width: 100%; }
-      .emissions-header, .circulating-header { flex-direction: column; align-items: flex-start; }
-      .emissions-stats, .circulating-stats { width: 100%; justify-content: space-between; }
-    }
+    @media (max-width: 640px) { .container { padding: 24px 12px; } h1 { font-size: 1.8rem; } .total-amount { font-size: 2.2rem; } .wallet-inner { flex-direction: column; align-items: flex-start; } .wallet-right { text-align: left; width: 100%; } .emissions-header, .circulating-header { flex-direction: column; } .emissions-stats, .circulating-stats { width: 100%; justify-content: space-between; } }
   </style>
 </head>
 <body>
@@ -212,15 +201,14 @@
       <div class="emissions-header">
         <div><div class="emissions-label">⚡ Network Emissions vs Burns</div><div class="emissions-subtitle" id="emissions-block-range">Block range: Loading...</div></div>
         <div class="emissions-stats">
-          <div class="emissions-stat"><div class="emissions-stat-label">Total Emitted</div><div class="emissions-stat-amount em" id="total-emissions">---</div></div>
-          <div class="emissions-stat"><div class="emissions-stat-label">Total Burned</div><div class="emissions-stat-amount bu" id="total-burns-stat">---</div></div>
-          <div class="emissions-stat"><div class="emissions-stat-label">Net Supply</div><div class="emissions-stat-amount ne" id="net-supply">---</div></div>
+          <div class="emissions-stat"><div class="emissions-stat-label">Total Emitted</div><div class="emissions-stat-amount" style="color: #66ccff;" id="total-emissions">---</div></div>
+          <div class="emissions-stat"><div class="emissions-stat-label">Total Burned</div><div class="emissions-stat-amount" style="color: #ff9966;" id="total-burns-stat">---</div></div>
+          <div class="emissions-stat"><div class="emissions-stat-label">Net Supply</div><div class="emissions-stat-amount" style="color: #66ff99;" id="net-supply">---</div></div>
         </div>
       </div>
       <div class="emissions-chart-container">
         <p class="emissions-chart-title">Cumulative Emissions & Burns Over Time</p>
-        <div class="emissions-chart-wrapper"><canvas id="emissions-chart" style="display: none;"></canvas></div>
-        <div class="emissions-chart-loading" id="emissions-loading"><div class="spinner" style="width: 24px; height: 24px;"></div><span id="emissions-loading-text">Initializing...</span><div class="emissions-progress"><div class="emissions-progress-bar" id="emissions-progress-bar" style="width: 0%;"></div></div></div>
+        <div class="emissions-chart-wrapper"><canvas id="emissions-chart" style="display: none;"></canvas><div class="emissions-chart-loading" id="emissions-loading"><div class="spinner" style="width: 24px; height: 24px;"></div><span id="emissions-loading-text">Initializing...</span><div class="emissions-progress"><div class="emissions-progress-bar" id="emissions-progress-bar"></div></div></div></div>
         <div class="emissions-legend"><div class="legend-item"><div class="legend-color" style="background: #66ccff;"></div><span>Cumulative Emissions</span></div><div class="legend-item"><div class="legend-color" style="background: #ff9966;"></div><span>Cumulative Burns</span></div></div>
       </div>
     </div>
@@ -237,8 +225,7 @@
       </div>
       <div class="circulating-chart-container">
         <p class="circulating-chart-title">Unlocked Emissions vs Burns Over Time</p>
-        <div class="circulating-chart-wrapper"><canvas id="circulating-chart" style="display: none;"></canvas></div>
-        <div class="circulating-chart-loading" id="circulating-loading"><div class="spinner" style="width: 24px; height: 24px; border-color: #3a5014; border-top-color: #99ff66;"></div><span>Waiting for emissions data...</span></div>
+        <div class="circulating-chart-wrapper"><canvas id="circulating-chart" style="display: none;"></canvas><div class="circulating-chart-loading" id="circulating-loading"><div class="spinner" style="width: 24px; height: 24px; border-color: #3a5014; border-top-color: #99ff66;"></div><span>Waiting for emissions data...</span></div></div>
         <div class="emissions-legend"><div class="legend-item"><div class="legend-color" style="background: #99ff66;"></div><span>Unlocked Emissions</span></div><div class="legend-item"><div class="legend-color" style="background: #ff9966;"></div><span>Cumulative Burns</span></div></div>
       </div>
     </div>
@@ -255,8 +242,7 @@
       </div>
       <div class="circulating-chart-container" style="background: rgba(16, 8, 24, 0.8); border-color: #4a2050;">
         <p class="circulating-chart-title" style="color: #aa88cc;">Unlocked vs Burns (36hr Lag Corrected)</p>
-        <div class="circulating-chart-wrapper"><canvas id="aligned-chart" style="display: none;"></canvas></div>
-        <div class="circulating-chart-loading" id="aligned-loading" style="color: #aa88bb;"><div class="spinner" style="width: 24px; height: 24px; border-color: #4a2050; border-top-color: #cc99ff;"></div><span>Waiting for emissions data...</span></div>
+        <div class="circulating-chart-wrapper"><canvas id="aligned-chart" style="display: none;"></canvas><div class="circulating-chart-loading" id="aligned-loading" style="color: #aa88bb;"><div class="spinner" style="width: 24px; height: 24px; border-color: #4a2050; border-top-color: #cc99ff;"></div><span>Waiting for emissions data...</span></div></div>
         <div class="emissions-legend"><div class="legend-item"><div class="legend-color" style="background: #99ff66;"></div><span>Unlocked Emissions</span></div><div class="legend-item"><div class="legend-color" style="background: #ff9966;"></div><span>Burns (shifted -36hrs)</span></div><div class="legend-item"><div class="legend-color" style="background: #cc99ff;"></div><span>Net (aligned)</span></div></div>
       </div>
     </div>
@@ -266,129 +252,153 @@
       <p>RVN via <a href="https://cryptoscope.io" target="_blank">CryptoScope</a> • BCH via <a href="https://fullstack.cash" target="_blank">FullStack.cash</a></p>
       <p>LTC & DOGE via <a href="https://blockcypher.com" target="_blank">BlockCypher</a> • QUAI via <a href="https://rpc.quai.network" target="_blank">Quai RPC</a></p>
       <p>Burn tracking via <a href="https://quaiscan.io" target="_blank">QuaiScan</a> • Prices from <a href="https://coingecko.com" target="_blank">CoinGecko</a></p>
-      <p>Emissions data from custom RPC node</p>
+      <p style="color: #aa8888; font-size: 12px;">Emissions graphs require local RPC node for full functionality</p>
     </footer>
   </div>
 
   <script>
+    // ========== ORIGINAL CORS PROXY SETUP (unchanged) ==========
     const CORS_PROXIES = [
-      'https://api.allorigins.win/raw?url='
+      'https://corsproxy.io/?',
+      'https://api.allorigins.win/raw?url=',
+      'https://proxy.cors.sh/'
     ];
     let currentProxyIndex = 0;
-    // Use custom RPC locally, public RPC on production (custom RPC needs HTTPS for production)
-    const LOCAL_RPC_URL = 'http://20.81.235.89:9200';
-    const PUBLIC_RPC_URL = 'https://rpc.quai.network/cyprus1/';
-    const CUSTOM_RPC_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? LOCAL_RPC_URL : PUBLIC_RPC_URL;
-    const EMISSIONS_START_BLOCK = 5422063;
-    const LOCKUP_BLOCKS = 241920;
-    const BURN_LAG_BLOCKS = 25920;
-    const FRESH_START_BLOCK = EMISSIONS_START_BLOCK + LOCKUP_BLOCKS;
-    const BURN_WALLET = '0x0050AF0000000000000000000000000000000000';
-    const CACHE_DURATION = 5 * 60 * 1000;
-    const EMISSIONS_CACHE_DURATION = 30 * 60 * 1000;
-
-    let emissionsChart = null, circulatingChart = null, alignedChart = null, emissionsData = [];
-    let balances = {}, prices = {}, quaiBalances = {}, quaiCharts = {}, quaiHistoryData = {}, selectedTimeRange = {};
-    let loadedWithdrawals = [], loadedBurnDeposits = [], lastBurnTime = null;
-    let withdrawalsLoaded = false, burnDepositsLoaded = false, lastBurnRefreshTime = null;
-
-    const wallets = [
-      { coin: 'RVN', name: 'Ravencoin', address: 'RXtpH2yp6AA6VvPVTuhCrqxYG7vCGEPMB5', geckoId: 'ravencoin' },
-      { coin: 'BCH', name: 'Bitcoin Cash', address: 'qqqea0a7ryny69sskvx857apy3r6wt6w35524nm4xw', geckoId: 'bitcoin-cash' },
-      { coin: 'LTC', name: 'Litecoin', address: 'ltc1qlg96gqruz4vu5w86z6rpqxt6ugqxrljxzpvcu8', geckoId: 'litecoin' },
-      { coin: 'DOGE', name: 'Dogecoin', address: 'D6rnVyuuHB3x8et741kmXzFuZSTVnJQDke', geckoId: 'dogecoin' }
-    ];
-    const quaiWallets = [
-      { exchange: 'MEXC', address: '0x006243e4eE6C2CF6F993036f27f0A88f265Ddb4a' },
-      { exchange: 'GATE', address: '0x007e2F1a4709B812F339f22E18032118FBcc8987' }
-    ];
-    const coinIcons = {
-      RVN: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M16 6l-8 5v10l8 5 8-5V11l-8-5zm0 2.5l5.5 3.5v7l-5.5 3.5-5.5-3.5v-7L16 8.5z" fill="#ffffff"/></svg>`,
-      BCH: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M21.2 13.3c-.3-2-2.1-2.7-4.5-2.9V8h-1.8v2.3h-1.5V8h-1.8v2.4H9v1.8h1.3c.7 0 .9.4.9.7v7c0 .5-.3.7-.7.7H9l-.3 2h4.5v2.4h1.8v-2.4h1.5v2.4h1.8v-2.5c3-.2 5.1-.9 5.4-3.6.2-2.2-.8-3.2-2.5-3.6z" fill="#ffffff"/></svg>`,
-      LTC: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M12.5 24h9.8l.8-3h-6.2l1.5-5.5 2.5-1-.5 1.5h2.5l1-3.5-2.5 1 1.5-5.5h-3.5l-2.5 9-2.5 1 .5-2h-2.5l-1.5 5.5 2.5-1-.8 3z" fill="#ffffff"/></svg>`,
-      DOGE: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M13 9h4.5c4 0 6.5 2.5 6.5 7s-2.5 7-6.5 7H13V9zm3 2.5v9h1.5c2.5 0 4-1.5 4-4.5s-1.5-4.5-4-4.5H16zm-3 3h6v2h-6v-2z" fill="#ffffff"/></svg>`,
-      QUAI: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M16 6C10.5 6 6 10.5 6 16s4.5 10 10 10 10-4.5 10-10S21.5 6 16 6zm0 3c3.9 0 7 3.1 7 7s-3.1 7-7 7-7-3.1-7-7 3.1-7 7-7zm0 2.5c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5z" fill="#ffffff"/></svg>`
-    };
-
+    
     async function fetchWithProxy(url) {
-      // Try direct first (works locally)
-      try {
-        const response = await fetch(url);
-        if (response.ok) {
-          const data = await response.json();
-          if (!data.message?.includes('Rate limit')) return data;
-        }
-      } catch (e) { /* Direct failed, try proxy */ }
-      
-      // Try proxies
       for (let i = 0; i < CORS_PROXIES.length; i++) {
         const proxyIndex = (currentProxyIndex + i) % CORS_PROXIES.length;
         const proxy = CORS_PROXIES[proxyIndex];
         try {
           const response = await fetch(`${proxy}${encodeURIComponent(url)}`);
-          if (!response.ok) continue;
           const data = await response.json();
-          if (data.message && data.message.includes('Rate limit')) continue;
+          if (data.message && data.message.includes('Rate limit')) {
+            console.log(`Proxy ${proxy} rate limited, trying next...`);
+            continue;
+          }
           currentProxyIndex = proxyIndex;
           return data;
         } catch (e) { console.log(`Proxy ${proxy} failed:`, e.message); }
       }
       throw new Error('All CORS proxies failed');
     }
+    
+    const CORS_PROXY = CORS_PROXIES[0];
+    const BURN_WALLET = '0x0050AF0000000000000000000000000000000000';
+    
+    // ========== EMISSIONS CONFIG ==========
+    const EMISSIONS_START_BLOCK = 5422063;
+    const LOCKUP_BLOCKS = 241920;
+    const BURN_LAG_BLOCKS = 25920;
+    const FRESH_START_BLOCK = EMISSIONS_START_BLOCK + LOCKUP_BLOCKS;
+    const EMISSIONS_CACHE_DURATION = 30 * 60 * 1000;
+    // Use local RPC for emissions (HTTP only works locally, not on Vercel HTTPS)
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const CUSTOM_RPC_URL = isLocalhost ? 'http://20.81.235.89:9200' : null;
+    
+    const wallets = [
+      { coin: 'RVN', name: 'Ravencoin', address: 'RXtpH2yp6AA6VvPVTuhCrqxYG7vCGEPMB5', geckoId: 'ravencoin' },
+      { coin: 'BCH', name: 'Bitcoin Cash', address: 'qqqea0a7ryny69sskvx857apy3r6wt6w35524nm4xw', geckoId: 'bitcoin-cash' },
+      { coin: 'LTC', name: 'Litecoin', address: 'ltc1qlg96gqruz4vu5w86z6rpqxt6ugqxrljxzpvcu8', geckoId: 'litecoin' },
+      { coin: 'DOGE', name: 'Dogecoin', address: 'D6rnVyuuHB3x8et741kmXzFuZSTVnJQDke', geckoId: 'dogecoin' }
+    ];
 
-    async function fetchRpcWithProxy(rpcUrl, method, params) {
-      // If on HTTPS and RPC is HTTP, skip direct attempt
-      const isHttps = window.location.protocol === 'https:';
-      const rpcIsHttp = rpcUrl.startsWith('http://');
-      
-      if (!isHttps || !rpcIsHttp) {
-        try {
-          const response = await fetch(rpcUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) });
-          if (response.ok) return await response.json();
-        } catch (e) { console.log('Direct RPC failed, trying proxy...'); }
-      }
-      
-      // Try proxies
-      for (const proxy of CORS_PROXIES) {
-        try {
-          const response = await fetch(`${proxy}${encodeURIComponent(rpcUrl)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) });
-          if (response.ok) return await response.json();
-        } catch (e) { console.log(`Proxy ${proxy} failed`); }
-      }
-      throw new Error('All RPC attempts failed');
+    const quaiWallets = [
+      { exchange: 'MEXC', address: '0x006243e4eE6C2CF6F993036f27f0A88f265Ddb4a' },
+      { exchange: 'GATE', address: '0x007e2F1a4709B812F339f22E18032118FBcc8987' }
+    ];
+
+    const coinIcons = {
+      RVN: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M16 6l-8 5v10l8 5 8-5V11l-8-5zm0 2.5l5.5 3.5v7l-5.5 3.5-5.5-3.5v-7L16 8.5z" fill="#ffffff"/></svg>`,
+      BCH: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M21.2 13.3c-.3-2-2.1-2.7-4.5-2.9V8h-1.8v2.3h-1.5V8h-1.8v2.4H9v1.8h1.3c.7 0 .9.4.9.7v7c0 .5-.3.7-.7.7H9l-.3 2h4.5v2.4h1.8v-2.4h1.5v2.4h1.8v-2.5c3-.2 5.1-.9 5.4-3.6.2-2.2-.8-3.2-2.5-3.6zm-5.9-1.2h2c1.3 0 2 .4 2 1.4 0 1-.7 1.4-2 1.4h-2v-2.8zm2.5 8h-2.5v-3.2h2.5c1.5 0 2.2.5 2.2 1.6 0 1.1-.7 1.6-2.2 1.6z" fill="#ffffff"/></svg>`,
+      LTC: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M12.5 24h9.8l.8-3h-6.2l1.5-5.5 2.5-1-.5 1.5h2.5l1-3.5-2.5 1 1.5-5.5h-3.5l-2.5 9-2.5 1 .5-2h-2.5l-1.5 5.5 2.5-1-.8 3z" fill="#ffffff"/></svg>`,
+      DOGE: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M13 9h4.5c4 0 6.5 2.5 6.5 7s-2.5 7-6.5 7H13V9zm3 2.5v9h1.5c2.5 0 4-1.5 4-4.5s-1.5-4.5-4-4.5H16zm-3 3h6v2h-6v-2z" fill="#ffffff"/></svg>`,
+      QUAI: `<svg viewBox="0 0 32 32" class="coin-icon"><circle cx="16" cy="16" r="16" fill="#8b0000"/><path d="M16 6C10.5 6 6 10.5 6 16s4.5 10 10 10 10-4.5 10-10S21.5 6 16 6zm0 3c3.9 0 7 3.1 7 7s-3.1 7-7 7-7-3.1-7-7 3.1-7 7-7zm0 2.5c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5z" fill="#ffffff"/></svg>`
+    };
+
+    let balances = {}, prices = {}, quaiBalances = {}, quaiCharts = {}, quaiHistoryData = {}, selectedTimeRange = {};
+    let loadedWithdrawals = [], loadedBurnDeposits = [], lastBurnTime = null;
+    let withdrawalsLoaded = false, burnDepositsLoaded = false;
+    let lastBurnRefreshTime = null;
+    let emissionsData = [], emissionsChart = null, circulatingChart = null, alignedChart = null;
+
+    const CACHE_DURATION = 5 * 60 * 1000;
+
+    function getCachedHistory(exchange, days) {
+      try {
+        const cached = localStorage.getItem(`quai_history_${exchange}_${days}`);
+        if (cached) { const { data, timestamp } = JSON.parse(cached); if (Date.now() - timestamp < CACHE_DURATION) return data; }
+      } catch (e) {}
+      return null;
     }
-
-    function getCachedHistory(exchange, days) { try { const c = localStorage.getItem(`quai_history_${exchange}_${days}`); if (c) { const { data, timestamp } = JSON.parse(c); if (Date.now() - timestamp < CACHE_DURATION) return data; } } catch (e) {} return null; }
     function setCachedHistory(exchange, days, data) { try { localStorage.setItem(`quai_history_${exchange}_${days}`, JSON.stringify({ data, timestamp: Date.now() })); } catch (e) {} }
-    function getCachedWithdrawals() { try { const c = localStorage.getItem('withdrawals_cache'); if (c) { const { data, timestamp } = JSON.parse(c); if (Date.now() - timestamp < CACHE_DURATION) return data; } } catch (e) {} return null; }
+    function getCachedWithdrawals() { try { const cached = localStorage.getItem('withdrawals_cache'); if (cached) { const { data, timestamp } = JSON.parse(cached); if (Date.now() - timestamp < CACHE_DURATION) return data; } } catch (e) {} return null; }
     function setCachedWithdrawals(data) { try { localStorage.setItem('withdrawals_cache', JSON.stringify({ data, timestamp: Date.now() })); } catch (e) {} }
-    function getCachedBurnDeposits() { try { const c = localStorage.getItem('burn_deposits_cache'); if (c) { const { data, timestamp } = JSON.parse(c); if (Date.now() - timestamp < CACHE_DURATION) return data; } } catch (e) {} return null; }
+    function getCachedBurnDeposits() { try { const cached = localStorage.getItem('burn_deposits_cache'); if (cached) { const { data, timestamp } = JSON.parse(cached); if (Date.now() - timestamp < CACHE_DURATION) return data; } } catch (e) {} return null; }
     function setCachedBurnDeposits(data) { try { localStorage.setItem('burn_deposits_cache', JSON.stringify({ data, timestamp: Date.now() })); } catch (e) {} }
-    function getCachedEmissions() { try { const c = localStorage.getItem('emissions_cache'); if (c) { const { data, timestamp } = JSON.parse(c); if (Date.now() - timestamp < EMISSIONS_CACHE_DURATION) return data; } } catch (e) {} return null; }
+    function getCachedEmissions() { try { const cached = localStorage.getItem('emissions_cache'); if (cached) { const { data, timestamp } = JSON.parse(cached); if (Date.now() - timestamp < EMISSIONS_CACHE_DURATION) return data; } } catch (e) {} return null; }
     function setCachedEmissions(data) { try { localStorage.setItem('emissions_cache', JSON.stringify({ data, timestamp: Date.now() })); } catch (e) {} }
 
     function renderWallets() {
-      document.getElementById('wallets').innerHTML = wallets.map((w, i) => `
-        <div class="wallet-card" data-index="0${i+1}"><div class="wallet-inner"><div class="wallet-left"><div class="coin-icon-wrapper">${coinIcons[w.coin]}</div><div class="wallet-info"><h3>${w.name} <span class="coin-badge">${w.coin}</span></h3><p class="wallet-address">${w.address}</p><p class="wallet-price" id="price-${w.coin}">Loading price...</p><p class="api-source" id="source-${w.coin}"></p></div></div><div class="wallet-right" id="balance-${w.coin}"><div class="loading-spinner"><div class="spinner"></div><span>LOADING...</span></div></div></div></div>
+      document.getElementById('wallets').innerHTML = wallets.map((wallet, index) => `
+        <div class="wallet-card" data-index="0${index + 1}">
+          <div class="wallet-inner">
+            <div class="wallet-left">
+              <div class="coin-icon-wrapper">${coinIcons[wallet.coin]}</div>
+              <div class="wallet-info">
+                <h3>${wallet.name} <span class="coin-badge">${wallet.coin}</span></h3>
+                <p class="wallet-address">${wallet.address}</p>
+                <p class="wallet-price" id="price-${wallet.coin}">Loading price...</p>
+                <p class="api-source" id="source-${wallet.coin}"></p>
+              </div>
+            </div>
+            <div class="wallet-right" id="balance-${wallet.coin}"><div class="loading-spinner"><div class="spinner"></div><span>LOADING...</span></div></div>
+          </div>
+        </div>
       `).join('');
     }
 
     function renderQuaiWallets() {
-      document.getElementById('quai-wallets').innerHTML = quaiWallets.map((w, i) => {
-        selectedTimeRange[w.exchange] = 1;
-        return `<div class="wallet-card" data-index="0${i+1}"><div class="wallet-inner"><div class="wallet-left"><div class="coin-icon-wrapper">${coinIcons.QUAI}</div><div class="wallet-info"><h3>${w.exchange} <span class="coin-badge">QUAI</span></h3><p class="wallet-address">${w.address}</p><p class="api-source">via Quai RPC</p></div></div><div class="wallet-right" id="quai-balance-${w.exchange}"><div class="loading-spinner"><div class="spinner"></div><span>LOADING...</span></div></div></div><div class="chart-container"><div class="chart-header"><p class="chart-title">Balance History <span id="chart-info-${w.exchange}" style="font-size: 14px; color: #aa7777;"></span></p><div class="time-range-buttons"><button class="time-btn active" data-exchange="${w.exchange}" data-days="1" onclick="changeTimeRange('${w.exchange}', 1)">24H</button><button class="time-btn" data-exchange="${w.exchange}" data-days="7" onclick="changeTimeRange('${w.exchange}', 7)">7D</button><button class="time-btn" data-exchange="${w.exchange}" data-days="30" onclick="changeTimeRange('${w.exchange}', 30)">30D</button><button class="time-btn" data-exchange="${w.exchange}" data-days="90" onclick="changeTimeRange('${w.exchange}', 90)">90D</button></div></div><div class="chart-wrapper"><canvas id="chart-${w.exchange}"></canvas></div><div class="chart-loading" id="chart-loading-${w.exchange}"><div class="spinner" style="margin-right: 8px;"></div>Loading chart data...</div></div></div>`;
-      }).join('');
+      document.getElementById('quai-wallets').innerHTML = quaiWallets.map((wallet, index) => {
+        selectedTimeRange[wallet.exchange] = 1;
+        return `
+        <div class="wallet-card" data-index="0${index + 1}">
+          <div class="wallet-inner">
+            <div class="wallet-left">
+              <div class="coin-icon-wrapper">${coinIcons.QUAI}</div>
+              <div class="wallet-info">
+                <h3>${wallet.exchange} <span class="coin-badge">QUAI</span></h3>
+                <p class="wallet-address">${wallet.address}</p>
+                <p class="api-source">via Quai RPC</p>
+              </div>
+            </div>
+            <div class="wallet-right" id="quai-balance-${wallet.exchange}"><div class="loading-spinner"><div class="spinner"></div><span>LOADING...</span></div></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-header">
+              <p class="chart-title">Balance History <span id="chart-info-${wallet.exchange}" style="font-size: 14px; color: #aa7777;"></span></p>
+              <div class="time-range-buttons">
+                <button class="time-btn active" data-exchange="${wallet.exchange}" data-days="1" onclick="changeTimeRange('${wallet.exchange}', 1)">24H</button>
+                <button class="time-btn" data-exchange="${wallet.exchange}" data-days="7" onclick="changeTimeRange('${wallet.exchange}', 7)">7D</button>
+                <button class="time-btn" data-exchange="${wallet.exchange}" data-days="30" onclick="changeTimeRange('${wallet.exchange}', 30)">30D</button>
+                <button class="time-btn" data-exchange="${wallet.exchange}" data-days="90" onclick="changeTimeRange('${wallet.exchange}', 90)">90D</button>
+              </div>
+            </div>
+            <div class="chart-wrapper"><canvas id="chart-${wallet.exchange}"></canvas></div>
+            <div class="chart-loading" id="chart-loading-${wallet.exchange}"><div class="spinner" style="margin-right: 8px;"></div>Loading chart data...</div>
+          </div>
+        </div>
+      `}).join('');
     }
 
     async function changeTimeRange(exchange, days) {
       selectedTimeRange[exchange] = days;
       document.querySelectorAll(`.time-btn[data-exchange="${exchange}"]`).forEach(btn => btn.classList.toggle('active', parseInt(btn.dataset.days) === days));
-      const cached = getCachedHistory(exchange, days);
-      if (cached) { quaiHistoryData[exchange] = cached; createChart(exchange, cached, days); return; }
+      const cachedHistory = getCachedHistory(exchange, days);
+      if (cachedHistory) { quaiHistoryData[exchange] = cachedHistory; createChart(exchange, cachedHistory, days); return; }
       const wallet = quaiWallets.find(w => w.exchange === exchange);
       if (wallet) {
-        const loadingEl = document.getElementById(`chart-loading-${exchange}`);
-        const canvas = document.getElementById(`chart-${exchange}`);
+        const loadingEl = document.getElementById(`chart-loading-${exchange}`), canvas = document.getElementById(`chart-${exchange}`);
         if (loadingEl) { loadingEl.style.display = 'flex'; loadingEl.innerHTML = `<div class="spinner" style="margin-right: 8px;"></div>Loading ${days === 1 ? '24H' : days + 'D'} history...`; }
         if (canvas) canvas.style.display = 'none';
         const history = await fetchQuaiBalanceHistory(wallet.address, days);
@@ -401,64 +411,40 @@
     async function fetchPrices() {
       try {
         const ids = [...wallets.map(w => w.geckoId), 'quai-network'].join(',');
-        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`;
-        let data;
-        try { const r = await fetch(url); if (r.ok) data = await r.json(); else throw new Error(); }
-        catch (e) { data = await fetchWithProxy(url); }
-        wallets.forEach(w => { if (data[w.geckoId]) { prices[w.coin] = data[w.geckoId].usd; document.getElementById(`price-${w.coin}`).textContent = `$${prices[w.coin].toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 6 })} / ${w.coin}`; }});
+        const data = await (await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`)).json();
+        wallets.forEach(wallet => { if (data[wallet.geckoId]) { prices[wallet.coin] = data[wallet.geckoId].usd; document.getElementById(`price-${wallet.coin}`).textContent = `$${prices[wallet.coin].toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 6 })} / ${wallet.coin}`; }});
         if (data['quai-network']) prices['QUAI'] = data['quai-network'].usd;
-      } catch (e) { console.error('Failed to fetch prices:', e); }
+      } catch (err) { console.error('Failed to fetch prices:', err); }
     }
 
-    async function fetchRVN(addr) { const d = await fetchWithProxy(`https://rvn.cryptoscope.io/api/getaddress/?address=${addr}`); if (d?.balance !== undefined) return { balance: parseFloat(d.balance), source: 'CryptoScope' }; throw new Error('RVN API failed'); }
-    async function fetchBCH(addr) { const d = await fetchWithProxy(`https://bchn.fullstack.cash/v5/electrumx/balance/bitcoincash:${addr}`); if (d.balance?.confirmed !== undefined) return { balance: (d.balance.confirmed + (d.balance.unconfirmed || 0)) / 1e8, source: 'FullStack.cash' }; throw new Error('BCH API failed'); }
-    async function fetchLTC(addr) { const d = await fetchWithProxy(`https://api.blockcypher.com/v1/ltc/main/addrs/${addr}/balance`); return { balance: d.balance / 1e8, source: 'BlockCypher' }; }
-    async function fetchDOGE(addr) { const d = await fetchWithProxy(`https://api.blockcypher.com/v1/doge/main/addrs/${addr}/balance`); return { balance: d.balance / 1e8, source: 'BlockCypher' }; }
+    async function fetchRVN(address) { const data = await fetchWithProxy(`https://rvn.cryptoscope.io/api/getaddress/?address=${address}`); if (data?.balance !== undefined) return { balance: parseFloat(data.balance), source: 'CryptoScope' }; throw new Error('RVN API failed'); }
+    async function fetchBCH(address) { const data = await fetchWithProxy(`https://bchn.fullstack.cash/v5/electrumx/balance/bitcoincash:${address}`); if (data.balance?.confirmed !== undefined) return { balance: (data.balance.confirmed + (data.balance.unconfirmed || 0)) / 1e8, source: 'FullStack.cash' }; throw new Error('BCH API failed'); }
+    async function fetchLTC(address) { try { const response = await fetch(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}/balance`); if (response.ok) { const data = await response.json(); return { balance: data.balance / 1e8, source: 'BlockCypher' }; } } catch (e) { console.log('LTC direct fetch failed, trying proxy...'); } const data = await fetchWithProxy(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}/balance`); return { balance: data.balance / 1e8, source: 'BlockCypher' }; }
+    async function fetchDOGE(address) { try { const response = await fetch(`https://api.blockcypher.com/v1/doge/main/addrs/${address}/balance`); if (response.ok) { const data = await response.json(); return { balance: data.balance / 1e8, source: 'BlockCypher' }; } } catch (e) { console.log('DOGE direct fetch failed, trying proxy...'); } const data = await fetchWithProxy(`https://api.blockcypher.com/v1/doge/main/addrs/${address}/balance`); return { balance: data.balance / 1e8, source: 'BlockCypher' }; }
 
-    async function fetchBalance(wallet) {
-      const el = document.getElementById(`balance-${wallet.coin}`);
-      const srcEl = document.getElementById(`source-${wallet.coin}`);
+    async function fetchHistoricalQuaiPrices(startTimestamp, endTimestamp) {
       try {
-        const result = await ({ RVN: fetchRVN, BCH: fetchBCH, LTC: fetchLTC, DOGE: fetchDOGE }[wallet.coin](wallet.address));
-        balances[wallet.coin] = result.balance;
-        const usd = result.balance * (prices[wallet.coin] || 0);
-        el.innerHTML = `<p class="wallet-balance">${result.balance.toLocaleString(undefined, { maximumFractionDigits: 8 })}<span class="wallet-balance-coin">${wallet.coin}</span></p><p class="wallet-usd">$${usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>`;
-        srcEl.textContent = `via ${result.source}`;
-      } catch (e) { el.innerHTML = `<p class="wallet-error">FAILED TO LOAD</p>`; srcEl.textContent = 'API error'; balances[wallet.coin] = 0; }
-    }
-
-    async function fetchHistoricalQuaiPrices(startTs, endTs) {
-      try {
-        const url = `https://api.coingecko.com/api/v3/coins/quai-network/market_chart/range?vs_currency=usd&from=${Math.floor(startTs/1000)}&to=${Math.floor(endTs/1000)}`;
-        let data;
-        try { const r = await fetch(url); if (r.ok) data = await r.json(); else throw new Error(); }
-        catch (e) { data = await fetchWithProxy(url); }
+        const url = `https://api.coingecko.com/api/v3/coins/quai-network/market_chart/range?vs_currency=usd&from=${Math.floor(startTimestamp/1000)}&to=${Math.floor(endTimestamp/1000)}`;
+        const response = await fetch(url);
+        const data = await response.json();
         if (data.prices && Array.isArray(data.prices)) return data.prices;
-      } catch (e) { console.error('Failed to fetch historical QUAI prices:', e); }
+      } catch (err) { console.error('Failed to fetch historical QUAI prices:', err); }
       return null;
     }
 
-    function findPriceAtTime(priceHistory, targetTs) {
+    function findPriceAtTime(priceHistory, targetTimestamp) {
       if (!priceHistory || priceHistory.length === 0) return null;
-      let closest = priceHistory[0], closestDiff = Math.abs(priceHistory[0][0] - targetTs);
-      for (const [ts, price] of priceHistory) { const diff = Math.abs(ts - targetTs); if (diff < closestDiff) { closestDiff = diff; closest = [ts, price]; } }
+      let closest = priceHistory[0], closestDiff = Math.abs(priceHistory[0][0] - targetTimestamp);
+      for (const [ts, price] of priceHistory) { const diff = Math.abs(ts - targetTimestamp); if (diff < closestDiff) { closestDiff = diff; closest = [ts, price]; } }
       return closest[1];
     }
 
     async function fetchBurnWalletBalance() {
       try {
-        const r = await fetch('https://rpc.quai.network/cyprus1/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'quai_getBalance', params: [BURN_WALLET, 'latest'], id: 1 }) });
-        const d = await r.json();
-        return d.result ? parseInt(d.result, 16) / 1e18 : 0;
-      } catch (e) { return 0; }
-    }
-
-    async function fetchBurnWalletBalanceAtBlock(blockHex) {
-      try {
-        const r = await fetch('https://rpc.quai.network/cyprus1/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'quai_getBalance', params: [BURN_WALLET, blockHex], id: 1 }) });
-        const d = await r.json();
-        return d.result ? parseInt(d.result, 16) / 1e18 : null;
-      } catch (e) { return null; }
+        const response = await fetch('https://rpc.quai.network/cyprus1/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'quai_getBalance', params: [BURN_WALLET, 'latest'], id: 1 }) });
+        const data = await response.json();
+        return data.result ? parseInt(data.result, 16) / 1e18 : 0;
+      } catch (err) { console.error('Failed to fetch burn wallet balance:', err); return 0; }
     }
 
     async function fetchBurnDeposits(forceRefresh = false) {
@@ -472,227 +458,234 @@
         try {
           const data = await fetchWithProxy(`https://quaiscan.io/api?module=account&action=txlist&address=${BURN_WALLET}&sort=desc&page=1&offset=10`);
           if (data.result && Array.isArray(data.result)) deposits = data.result.filter(tx => tx.to && tx.to.toLowerCase() === BURN_WALLET.toLowerCase()).slice(0, 6).map(tx => ({ amount: parseInt(tx.value) / 1e18, from: tx.from, date: new Date(parseInt(tx.timeStamp) * 1000), txid: tx.hash, blockNumber: tx.blockNumber }));
-        } catch (e) { console.log('API failed, trying v2'); }
+        } catch (apiErr) { console.log('Blockscout API failed, trying alternative:', apiErr); }
         if (deposits.length === 0) {
           try {
             const data = await fetchWithProxy(`https://quaiscan.io/api/v2/addresses/${BURN_WALLET}/transactions?type=coin_transfer`);
             if (data.items && Array.isArray(data.items)) deposits = data.items.filter(tx => tx.to && tx.to.hash && tx.to.hash.toLowerCase() === BURN_WALLET.toLowerCase()).slice(0, 6).map(tx => ({ amount: parseInt(tx.value) / 1e18, from: tx.from?.hash || 'Unknown', date: new Date(tx.timestamp), txid: tx.hash, blockNumber: tx.block }));
-          } catch (e) { console.log('V2 also failed'); }
+          } catch (v2Err) { console.log('V2 API also failed:', v2Err); }
         }
         if (deposits.length === 0) deposits = await fetchBurnDepositsViaRPC();
         if (deposits.length > 0) {
           const timestamps = deposits.map(d => d.date.getTime());
-          const minTime = Math.min(...timestamps) - 86400000, maxTime = Math.max(...timestamps) + 86400000;
+          const minTime = Math.min(...timestamps) - (24 * 60 * 60 * 1000), maxTime = Math.max(...timestamps) + (24 * 60 * 60 * 1000);
           const priceHistory = await fetchHistoricalQuaiPrices(minTime, maxTime);
-          if (priceHistory) deposits = deposits.map(d => { const p = findPriceAtTime(priceHistory, d.date.getTime()); return { ...d, priceAtTime: p, usdValueAtTime: p ? d.amount * p : null }; });
+          if (priceHistory) deposits = deposits.map(d => { const priceAtTime = findPriceAtTime(priceHistory, d.date.getTime()); return { ...d, priceAtTime, usdValueAtTime: priceAtTime ? d.amount * priceAtTime : null }; });
         }
         setCachedBurnDeposits({ deposits: deposits.map(d => ({ ...d, date: d.date.toISOString() })), totalBalance });
         renderBurnDeposits(deposits, totalBalance, container);
-      } catch (e) { container.innerHTML = '<div class="no-burns">Failed to load burn deposits. <a href="https://quaiscan.io/address/' + BURN_WALLET + '" target="_blank" style="color: #ffaaaa;">View on QuaiScan →</a></div>'; burnDepositsLoaded = true; updatePendingBurns(); }
+      } catch (err) { console.error('Failed to fetch burn deposits:', err); container.innerHTML = '<div class="no-burns">Failed to load burn deposits.</div>'; burnDepositsLoaded = true; updatePendingBurns(); }
     }
 
     async function fetchBurnDepositsViaRPC() {
       const deposits = [];
       try {
-        const blockR = await fetch('https://rpc.quai.network/cyprus1/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'quai_blockNumber', params: [], id: 1 }) });
-        const blockD = await blockR.json();
-        const currentBlock = parseInt(blockD.result, 16);
+        const blockResponse = await fetch('https://rpc.quai.network/cyprus1/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'quai_blockNumber', params: [], id: 1 }) });
+        const blockData = await blockResponse.json();
+        const currentBlock = parseInt(blockData.result, 16);
         for (let i = 0; i < 100 && deposits.length < 6; i++) {
           const blockNum = currentBlock - i, blockHex = '0x' + blockNum.toString(16);
           try {
-            const txR = await fetch('https://rpc.quai.network/cyprus1/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'quai_getBlockByNumber', params: [blockHex, true], id: 1 }) });
-            const txD = await txR.json();
-            if (txD.result && txD.result.transactions) {
-              for (const tx of txD.result.transactions) {
+            const txResponse = await fetch('https://rpc.quai.network/cyprus1/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'quai_getBlockByNumber', params: [blockHex, true], id: 1 }) });
+            const txData = await txResponse.json();
+            if (txData.result && txData.result.transactions) {
+              for (const tx of txData.result.transactions) {
                 if (tx.to && tx.to.toLowerCase() === BURN_WALLET.toLowerCase()) {
                   const value = parseInt(tx.value, 16) / 1e18;
                   if (value > 0) { deposits.push({ amount: value, from: tx.from, date: new Date(Date.now() - (currentBlock - blockNum) * 5000), txid: tx.hash, blockNumber: blockNum }); if (deposits.length >= 6) break; }
                 }
               }
             }
-          } catch (e) {}
+          } catch (blockErr) {}
           if (i % 10 === 0) await new Promise(r => setTimeout(r, 100));
         }
-      } catch (e) {}
+      } catch (err) { console.error('RPC-based burn deposit fetch failed:', err); }
       return deposits;
     }
 
     function renderBurnDeposits(deposits, totalBalance, container) {
       const quaiPrice = prices['QUAI'] || 0, totalUsd = totalBalance * quaiPrice;
       lastBurnRefreshTime = new Date();
-      updateBurnRefreshIndicator();
       loadedBurnDeposits = deposits;
       burnDepositsLoaded = true;
-      if (deposits && deposits.length > 0) {
-        const sorted = [...deposits].sort((a, b) => (b.date instanceof Date ? b.date : new Date(b.date)) - (a.date instanceof Date ? a.date : new Date(a.date)));
-        lastBurnTime = sorted[0].date instanceof Date ? sorted[0].date : new Date(sorted[0].date);
-      }
+      if (deposits && deposits.length > 0) { const sortedBurns = [...deposits].sort((a, b) => (b.date instanceof Date ? b.date : new Date(b.date)) - (a.date instanceof Date ? a.date : new Date(a.date))); lastBurnTime = sortedBurns[0].date instanceof Date ? sortedBurns[0].date : new Date(sortedBurns[0].date); }
       updatePendingBurns();
       let html = `<div class="burn-header"><div class="burn-wallet-info"><div class="burn-wallet-label"><span class="burn-icon">🔥</span>QUAI Burn Address</div><div class="burn-wallet-address"><a href="https://quaiscan.io/address/${BURN_WALLET}" target="_blank">${BURN_WALLET}</a></div></div><div class="burn-total"><div class="burn-total-label">Total Burned</div><div class="burn-total-amount">${totalBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })} QUAI</div>${quaiPrice > 0 ? `<div style="color: #cc9999; font-family: 'VT323', monospace; font-size: 14px;">≈ $${totalUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>` : ''}</div></div>`;
-      if (!deposits || deposits.length === 0) html += '<div class="no-burns">No recent deposits found. <a href="https://quaiscan.io/address/' + BURN_WALLET + '" target="_blank" style="color: #ffaaaa;">View on QuaiScan →</a></div>';
-      else html += deposits.map(d => {
-        const date = d.date instanceof Date ? d.date : new Date(d.date);
-        const fromShort = d.from ? `${d.from.slice(0, 10)}...${d.from.slice(-6)}` : 'Unknown';
-        const hasHist = d.usdValueAtTime != null;
-        const usdVal = hasHist ? d.usdValueAtTime : (d.amount * quaiPrice);
-        const priceLabel = hasHist ? `$${usdVal.toLocaleString(undefined, { maximumFractionDigits: 2 })} (at time)` : `≈ $${usdVal.toLocaleString(undefined, { maximumFractionDigits: 2 })} (now)`;
-        return `<div class="burn-item"><div class="burn-item-left"><span class="burn-badge">🔥</span><div class="burn-item-info"><span class="burn-amount">+${d.amount.toLocaleString(undefined, { maximumFractionDigits: 4 })} QUAI</span>${usdVal > 0 ? `<span style="color: #aa8888; font-family: 'VT323', monospace; font-size: 12px;">${priceLabel}</span>` : ''}<span class="burn-from">From: <a href="https://quaiscan.io/address/${d.from}" target="_blank">${fromShort}</a></span></div></div><div class="burn-item-right"><div class="burn-date">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div><div class="burn-txid"><a href="https://quaiscan.io/tx/${d.txid}" target="_blank">${d.txid.slice(0, 12)}...${d.txid.slice(-6)}</a></div></div></div>`;
-      }).join('');
+      if (!deposits || deposits.length === 0) html += '<div class="no-burns">No recent deposits found.</div>';
+      else html += deposits.map(d => { const date = d.date instanceof Date ? d.date : new Date(d.date); const fromShort = d.from ? `${d.from.slice(0, 10)}...${d.from.slice(-6)}` : 'Unknown'; const hasHistoricalPrice = d.usdValueAtTime != null; const usdValue = hasHistoricalPrice ? d.usdValueAtTime : (d.amount * quaiPrice); const priceLabel = hasHistoricalPrice ? `$${usdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })} (at time)` : `≈ $${usdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })} (now)`; return `<div class="burn-item"><div class="burn-item-left"><span class="burn-badge">🔥</span><div class="burn-item-info"><span class="burn-amount">+${d.amount.toLocaleString(undefined, { maximumFractionDigits: 4 })} QUAI</span>${usdValue > 0 ? `<span style="color: #aa8888; font-family: 'VT323', monospace; font-size: 12px;">${priceLabel}</span>` : ''}<span class="burn-from">From: <a href="https://quaiscan.io/address/${d.from}" target="_blank">${fromShort}</a></span></div></div><div class="burn-item-right"><div class="burn-date">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div><div class="burn-txid"><a href="https://quaiscan.io/tx/${d.txid}" target="_blank">${d.txid.slice(0, 12)}...${d.txid.slice(-6)}</a></div></div></div>`; }).join('');
       container.innerHTML = html;
     }
 
-    async function fetchRVNWithdrawals(addr) {
+    async function fetchRVNWithdrawals(address) {
       try {
         const withdrawals = [];
-        const data = await fetchWithProxy(`https://blockbook.ravencoin.org/api/v2/address/${addr}?details=txids&pageSize=400&page=1`);
-        if (!data || !data.txids) return [];
+        let foundWithdrawals = 0;
+        const data = await fetchWithProxy(`https://blockbook.ravencoin.org/api/v2/address/${address}?details=txids&pageSize=400&page=1`);
+        if (!data || !data.txids || data.txids.length === 0) return [];
         for (const txid of data.txids) {
-          if (withdrawals.length >= 20) break;
+          if (foundWithdrawals >= 20) break;
           try {
             const tx = await fetchWithProxy(`https://blockbook.ravencoin.org/api/v2/tx/${txid}`);
-            const isInput = tx.vin?.some(vin => vin.addresses?.includes(addr));
-            if (isInput) {
-              const sent = tx.vout?.filter(v => !v.addresses?.includes(addr)).reduce((s, v) => s + parseInt(v.value || 0), 0) || 0;
-              if (sent > 0) withdrawals.push({ coin: 'RVN', amount: sent / 1e8, date: new Date(tx.blockTime * 1000), txid: tx.txid, explorer: `https://blockbook.ravencoin.org/tx/${tx.txid}` });
-            }
+            const isInput = tx.vin?.some(vin => vin.addresses?.includes(address));
+            if (isInput) { const sentAmount = tx.vout?.filter(vout => !vout.addresses?.includes(address)).reduce((sum, vout) => sum + parseInt(vout.value || 0), 0) || 0; if (sentAmount > 0) { withdrawals.push({ coin: 'RVN', amount: sentAmount / 1e8, date: new Date(tx.blockTime * 1000), txid: tx.txid, explorer: `https://blockbook.ravencoin.org/tx/${tx.txid}` }); foundWithdrawals++; } }
             await new Promise(r => setTimeout(r, 100));
           } catch (e) {}
         }
         return withdrawals;
-      } catch (e) { return []; }
+      } catch (err) { return []; }
     }
 
-    async function fetchBCHWithdrawals(addr) {
+    async function fetchBCHWithdrawals(address) {
       try {
-        const data = await fetchWithProxy(`https://bchn.fullstack.cash/v5/electrumx/transactions/bitcoincash:${addr}`);
+        const fullAddress = `bitcoincash:${address}`;
+        const data = await fetchWithProxy(`https://bchn.fullstack.cash/v5/electrumx/transactions/${fullAddress}`);
         if (!data || !data.transactions) return [];
         const withdrawals = [];
         for (const tx of data.transactions.slice(0, 6)) {
           try {
-            const txR = await fetchWithProxy(`https://bchn.fullstack.cash/v5/electrumx/tx/data/${tx.tx_hash}`);
-            const txD = txR.details || txR;
-            if (txD && txD.vout) {
-              const received = txD.vout.filter(v => (v.scriptPubKey?.addresses || []).some(a => a.includes(addr))).reduce((s, v) => s + (parseFloat(v.value) || 0), 0);
-              const totalOut = txD.vout.reduce((s, v) => s + (parseFloat(v.value) || 0), 0);
-              if (received === 0 && totalOut > 0) withdrawals.push({ coin: 'BCH', amount: totalOut, date: txD.blocktime ? new Date(txD.blocktime * 1000) : new Date(), txid: tx.tx_hash, explorer: `https://blockchair.com/bitcoin-cash/transaction/${tx.tx_hash}` });
+            const txResult = await fetchWithProxy(`https://bchn.fullstack.cash/v5/electrumx/tx/data/${tx.tx_hash}`);
+            const txData = txResult.details || txResult;
+            if (txData && txData.vout) {
+              const receivedAmount = txData.vout.filter(vout => { const addrs = vout.scriptPubKey?.addresses || []; return addrs.some(a => a.includes(address)); }).reduce((sum, vout) => sum + (parseFloat(vout.value) || 0), 0);
+              const totalOut = txData.vout.reduce((sum, vout) => sum + (parseFloat(vout.value) || 0), 0);
+              if (receivedAmount === 0 && totalOut > 0) withdrawals.push({ coin: 'BCH', amount: totalOut, date: txData.blocktime ? new Date(txData.blocktime * 1000) : new Date(), txid: tx.tx_hash, explorer: `https://blockchair.com/bitcoin-cash/transaction/${tx.tx_hash}` });
             }
             await new Promise(r => setTimeout(r, 500));
           } catch (e) {}
         }
         return withdrawals;
-      } catch (e) { return []; }
+      } catch (err) { return []; }
     }
 
-    async function fetchLTCWithdrawals(addr) {
+    async function fetchLTCWithdrawals(address) {
       try {
-        const data = await fetchWithProxy(`https://api.blockcypher.com/v1/ltc/main/addrs/${addr}/full?limit=20`);
+        let data;
+        try { const response = await fetch(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}/full?limit=20`); if (response.ok) data = await response.json(); else throw new Error(); } catch (e) { data = await fetchWithProxy(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}/full?limit=20`); }
         if (!data || !data.txs) return [];
         const withdrawals = [];
-        for (const tx of data.txs) {
-          const isInput = tx.inputs?.some(i => i.addresses?.includes(addr));
-          if (isInput) { const sent = tx.outputs?.filter(o => !o.addresses?.includes(addr)).reduce((s, o) => s + (o.value || 0), 0) || 0; if (sent > 0) withdrawals.push({ coin: 'LTC', amount: sent / 1e8, date: new Date(tx.confirmed || tx.received), txid: tx.hash, explorer: `https://blockchair.com/litecoin/transaction/${tx.hash}` }); }
-        }
+        for (const tx of data.txs) { const isInput = tx.inputs?.some(input => input.addresses && input.addresses.includes(address)); if (isInput) { const sentAmount = tx.outputs?.filter(out => !out.addresses?.includes(address)).reduce((sum, out) => sum + (out.value || 0), 0) || 0; if (sentAmount > 0) withdrawals.push({ coin: 'LTC', amount: sentAmount / 1e8, date: new Date(tx.confirmed || tx.received), txid: tx.hash, explorer: `https://blockchair.com/litecoin/transaction/${tx.hash}` }); } }
         return withdrawals;
-      } catch (e) { return []; }
+      } catch (err) { return []; }
     }
 
-    async function fetchDOGEWithdrawals(addr) {
+    async function fetchDOGEWithdrawals(address) {
       try {
-        const data = await fetchWithProxy(`https://api.blockcypher.com/v1/doge/main/addrs/${addr}/full?limit=20`);
+        let data;
+        try { const response = await fetch(`https://api.blockcypher.com/v1/doge/main/addrs/${address}/full?limit=20`); if (response.ok) data = await response.json(); else throw new Error(); } catch (e) { data = await fetchWithProxy(`https://api.blockcypher.com/v1/doge/main/addrs/${address}/full?limit=20`); }
         if (!data || !data.txs) return [];
         const withdrawals = [];
-        for (const tx of data.txs) {
-          const isInput = tx.inputs?.some(i => i.addresses?.includes(addr));
-          if (isInput) { const sent = tx.outputs?.filter(o => !o.addresses?.includes(addr)).reduce((s, o) => s + (o.value || 0), 0) || 0; if (sent > 0) withdrawals.push({ coin: 'DOGE', amount: sent / 1e8, date: new Date(tx.confirmed || tx.received), txid: tx.hash, explorer: `https://blockchair.com/dogecoin/transaction/${tx.hash}` }); }
-        }
+        for (const tx of data.txs) { const isInput = tx.inputs?.some(input => input.addresses && input.addresses.includes(address)); if (isInput) { const sentAmount = tx.outputs?.filter(out => !out.addresses?.includes(address)).reduce((sum, out) => sum + (out.value || 0), 0) || 0; if (sentAmount > 0) withdrawals.push({ coin: 'DOGE', amount: sentAmount / 1e8, date: new Date(tx.confirmed || tx.received), txid: tx.hash, explorer: `https://blockchair.com/dogecoin/transaction/${tx.hash}` }); } }
         return withdrawals;
-      } catch (e) { return []; }
+      } catch (err) { return []; }
     }
 
     async function fetchAllWithdrawals(forceRefresh = false) {
       const container = document.getElementById('withdrawals');
       if (forceRefresh) container.innerHTML = `<div class="loading-spinner" style="justify-content: center; padding: 20px;"><div class="spinner"></div><span>Loading withdrawals...</span></div>`;
-      if (!forceRefresh) { const cached = getCachedWithdrawals(); if (cached) { const isNew = cached.withdrawals !== undefined; const w = isNew ? cached.withdrawals : cached; const f = isNew ? (cached.failedApis || []) : []; const ok = isNew ? cached.allApisSucceeded : true; if (w && w.length > 0 && ok) { renderWithdrawals(w, container, f); return; } } }
+      if (!forceRefresh) { const cached = getCachedWithdrawals(); if (cached) { const isNewFormat = cached.withdrawals !== undefined; const withdrawals = isNewFormat ? cached.withdrawals : cached; const failedApis = isNewFormat ? (cached.failedApis || []) : []; const allApisSucceeded = isNewFormat ? cached.allApisSucceeded : true; if (withdrawals && withdrawals.length > 0 && allApisSucceeded) { renderWithdrawals(withdrawals, container, failedApis); return; } } }
       container.innerHTML = `<div class="loading-spinner" style="justify-content: center; padding: 20px;"><div class="spinner"></div><span>Loading withdrawals...</span></div>`;
       try {
-        const results = { RVN: [], BCH: [], LTC: [], DOGE: [] }, failed = [];
-        try { results.RVN = await fetchRVNWithdrawals(wallets.find(w => w.coin === 'RVN').address); } catch (e) { failed.push('RVN'); }
-        try { results.BCH = await fetchBCHWithdrawals(wallets.find(w => w.coin === 'BCH').address); } catch (e) { failed.push('BCH'); }
-        try { results.LTC = await fetchLTCWithdrawals(wallets.find(w => w.coin === 'LTC').address); } catch (e) { failed.push('LTC'); }
-        try { results.DOGE = await fetchDOGEWithdrawals(wallets.find(w => w.coin === 'DOGE').address); } catch (e) { failed.push('DOGE'); }
-        let all = [...results.RVN, ...results.BCH, ...results.LTC, ...results.DOGE].filter(w => w.date && !isNaN(w.date.getTime())).sort((a, b) => b.date - a.date).slice(0, 20);
-        const ok = failed.length === 0;
-        if (ok) setCachedWithdrawals({ withdrawals: all.map(w => ({ ...w, date: w.date.toISOString() })), allApisSucceeded: true, failedApis: [] });
-        renderWithdrawals(all, container, [...new Set(failed)]);
-      } catch (e) { container.innerHTML = '<div class="no-withdrawals">Failed to load withdrawals</div>'; withdrawalsLoaded = true; updatePendingBurns(); }
+        const apiResults = { RVN: [], BCH: [], LTC: [], DOGE: [] }, failedApis = [];
+        try { apiResults.RVN = await fetchRVNWithdrawals(wallets.find(w => w.coin === 'RVN').address); } catch (e) { failedApis.push('RVN'); }
+        try { apiResults.BCH = await fetchBCHWithdrawals(wallets.find(w => w.coin === 'BCH').address); } catch (e) { failedApis.push('BCH'); }
+        try { apiResults.LTC = await fetchLTCWithdrawals(wallets.find(w => w.coin === 'LTC').address); } catch (e) { failedApis.push('LTC'); }
+        try { apiResults.DOGE = await fetchDOGEWithdrawals(wallets.find(w => w.coin === 'DOGE').address); } catch (e) { failedApis.push('DOGE'); }
+        let allWithdrawals = [...apiResults.RVN, ...apiResults.BCH, ...apiResults.LTC, ...apiResults.DOGE].filter(w => w.date && !isNaN(w.date.getTime())).sort((a, b) => b.date - a.date).slice(0, 20);
+        const uniqueFailedApis = [...new Set(failedApis)];
+        const allApisSucceeded = uniqueFailedApis.length === 0;
+        if (allApisSucceeded) setCachedWithdrawals({ withdrawals: allWithdrawals.map(w => ({ ...w, date: w.date.toISOString() })), allApisSucceeded, failedApis: uniqueFailedApis });
+        renderWithdrawals(allWithdrawals, container, uniqueFailedApis);
+      } catch (err) { container.innerHTML = '<div class="no-withdrawals">Failed to load withdrawals</div>'; withdrawalsLoaded = true; updatePendingBurns(); }
     }
 
     function renderWithdrawals(withdrawals, container, failedApis = []) {
-      loadedWithdrawals = withdrawals; withdrawalsLoaded = true; updatePendingBurns();
+      loadedWithdrawals = withdrawals;
+      withdrawalsLoaded = true;
+      updatePendingBurns();
       if (withdrawals.length === 0) { container.innerHTML = '<div class="no-withdrawals">No recent withdrawals found</div>'; return; }
-      let warn = failedApis.length > 0 ? `<div style="background: #3d2020; border: 1px solid #6b3333; padding: 10px 16px; margin-bottom: 8px; color: #ffaaaa; font-family: 'VT323', monospace; font-size: 14px;">⚠️ Warning: ${failedApis.join(', ')} withdrawal data may be incomplete.</div>` : '';
-      container.innerHTML = warn + withdrawals.map(w => {
-        const date = w.date instanceof Date ? w.date : new Date(w.date);
-        const usd = w.amount * (prices[w.coin] || 0);
-        const priceLabel = usd > 0 ? `≈ $${usd.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '';
-        return `<div class="withdrawal-item"><div class="withdrawal-left"><span class="withdrawal-coin-badge">${w.coin}</span><div class="withdrawal-info"><span class="withdrawal-amount">-${w.amount.toLocaleString(undefined, { maximumFractionDigits: 8 })} ${w.coin}</span>${priceLabel ? `<span class="withdrawal-to">${priceLabel}</span>` : '<span class="withdrawal-to">Sent from wallet</span>'}</div></div><div class="withdrawal-right"><div class="withdrawal-date">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div><div class="withdrawal-txid"><a href="${w.explorer}" target="_blank">${w.txid.slice(0, 12)}...${w.txid.slice(-6)}</a></div></div></div>`;
-      }).join('');
+      let warningHtml = '';
+      if (failedApis.length > 0) warningHtml = `<div style="background: #3d2020; border: 1px solid #6b3333; padding: 10px 16px; margin-bottom: 8px; color: #ffaaaa; font-family: 'VT323', monospace; font-size: 14px;">⚠️ Warning: ${failedApis.join(', ')} withdrawal data may be incomplete.</div>`;
+      container.innerHTML = warningHtml + withdrawals.map(w => { const date = w.date instanceof Date ? w.date : new Date(w.date); const currentPrice = prices[w.coin] || 0; const usdValue = w.amount * currentPrice; const priceLabel = currentPrice > 0 ? `≈ $${usdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : ''; return `<div class="withdrawal-item"><div class="withdrawal-left"><span class="withdrawal-coin-badge">${w.coin}</span><div class="withdrawal-info"><span class="withdrawal-amount">-${w.amount.toLocaleString(undefined, { maximumFractionDigits: 8 })} ${w.coin}</span>${priceLabel ? `<span class="withdrawal-to">${priceLabel}</span>` : '<span class="withdrawal-to">Sent from wallet</span>'}</div></div><div class="withdrawal-right"><div class="withdrawal-date">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div><div class="withdrawal-txid"><a href="${w.explorer}" target="_blank">${w.txid.slice(0, 12)}...${w.txid.slice(-6)}</a></div></div></div>`; }).join('');
     }
 
     function updatePendingBurns() {
       const container = document.getElementById('pending-burns');
       if (!withdrawalsLoaded || !burnDepositsLoaded) return;
       if (loadedWithdrawals.length === 0 && loadedBurnDeposits.length === 0) { container.innerHTML = `<div class="no-pending"><div class="all-burned-icon">📭</div>No withdrawal or burn data available</div>`; return; }
-      const withdrawalsWithBal = loadedWithdrawals.map(w => { const date = w.date instanceof Date ? w.date : new Date(w.date); const usd = w.amount * (prices[w.coin] || 0); return { ...w, date, usdValue: usd, remainingUsd: usd, originalUsd: usd }; }).sort((a, b) => a.date - b.date);
+      const withdrawalsWithBalance = loadedWithdrawals.map(w => { const date = w.date instanceof Date ? w.date : new Date(w.date); const currentPrice = prices[w.coin] || 0; const usdValue = w.amount * currentPrice; return { ...w, date, usdValue, remainingUsd: usdValue, originalUsd: usdValue }; }).sort((a, b) => a.date - b.date);
       const quaiPrice = prices['QUAI'] || 0;
-      const burnsWithUsd = loadedBurnDeposits.map(b => { const date = b.date instanceof Date ? b.date : new Date(b.date); const usd = b.usdValueAtTime != null ? b.usdValueAtTime : (b.amount * quaiPrice); return { ...b, date, usdValue: usd, usedHistoricalPrice: b.usdValueAtTime != null }; }).sort((a, b) => b.date - a.date).slice(0, 4).sort((a, b) => a.date - b.date);
-      for (const burn of burnsWithUsd) { let remaining = burn.usdValue; for (const w of withdrawalsWithBal) { if (remaining <= 0) break; if (w.remainingUsd <= 0) continue; if (w.date >= burn.date) continue; const ded = Math.min(remaining, w.remainingUsd); w.remainingUsd -= ded; remaining -= ded; } }
-      const pending = withdrawalsWithBal.filter(w => w.remainingUsd > 0.01).sort((a, b) => b.date - a.date);
-      renderPendingBurnsUI(pending, container);
+      const burnsWithUsd = loadedBurnDeposits.map(b => { const date = b.date instanceof Date ? b.date : new Date(b.date); const usdValue = b.usdValueAtTime != null ? b.usdValueAtTime : (b.amount * quaiPrice); return { ...b, date, usdValue, usedHistoricalPrice: b.usdValueAtTime != null }; }).sort((a, b) => b.date - a.date).slice(0, 4).sort((a, b) => a.date - b.date);
+      for (const burn of burnsWithUsd) { let burnRemaining = burn.usdValue; for (const withdrawal of withdrawalsWithBalance) { if (burnRemaining <= 0) break; if (withdrawal.remainingUsd <= 0) continue; if (withdrawal.date >= burn.date) continue; const deduction = Math.min(burnRemaining, withdrawal.remainingUsd); withdrawal.remainingUsd -= deduction; burnRemaining -= deduction; } }
+      const pendingWithdrawals = withdrawalsWithBalance.filter(w => w.remainingUsd > 0.01).sort((a, b) => b.date - a.date);
+      renderPendingBurnsUI(pendingWithdrawals, container);
     }
 
-    function renderPendingBurnsUI(pending, container) {
-      const total = pending.reduce((s, w) => s + w.remainingUsd, 0);
-      if (pending.length === 0 || total < 0.01) { container.innerHTML = `<div class="no-pending"><div class="all-burned-icon">✅</div>All tracked withdrawals have been burned!</div>`; return; }
-      let html = `<div class="pending-header"><div class="pending-info"><div class="pending-label"><span class="pending-icon">⏳</span>Withdrawals Awaiting Burn</div><div class="pending-subtitle">${pending.length} withdrawal${pending.length !== 1 ? 's' : ''} not fully burned yet</div></div><div class="pending-total"><div class="pending-total-label">Total Pending</div><div class="pending-total-amount">$${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div></div></div>`;
-      html += pending.map(w => {
-        const partial = w.remainingUsd < w.originalUsd - 0.01;
-        const pct = ((w.originalUsd - w.remainingUsd) / w.originalUsd * 100).toFixed(0);
-        return `<div class="pending-item"><div class="pending-item-left"><span class="pending-badge">${w.coin}</span><div class="pending-item-info"><span class="pending-amount">${w.amount.toLocaleString(undefined, { maximumFractionDigits: 8 })} ${w.coin}</span><span class="pending-coin">${partial ? `$${w.remainingUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })} pending of $${w.originalUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })} (${pct}% burned)` : `$${w.originalUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}`}</span></div></div><div class="pending-item-right"><div class="pending-date">${w.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${w.date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div><div class="pending-status">${partial ? '🔥 Partially burned' : '⏳ Awaiting burn'}</div></div></div>`;
-      }).join('');
+    function renderPendingBurnsUI(pendingWithdrawals, container) {
+      const totalPendingUsd = pendingWithdrawals.reduce((sum, w) => sum + w.remainingUsd, 0);
+      if (pendingWithdrawals.length === 0 || totalPendingUsd < 0.01) { container.innerHTML = `<div class="no-pending"><div class="all-burned-icon">✅</div>All tracked withdrawals have been burned!</div>`; return; }
+      let html = `<div class="pending-header"><div class="pending-info"><div class="pending-label"><span class="pending-icon">⏳</span>Withdrawals Awaiting Burn</div><div class="pending-subtitle">${pendingWithdrawals.length} withdrawal${pendingWithdrawals.length !== 1 ? 's' : ''} not fully burned yet</div></div><div class="pending-total"><div class="pending-total-label">Total Pending</div><div class="pending-total-amount">$${totalPendingUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div></div></div>`;
+      html += pendingWithdrawals.map(w => { const isPartial = w.remainingUsd < w.originalUsd - 0.01; const burnedPercent = ((w.originalUsd - w.remainingUsd) / w.originalUsd * 100).toFixed(0); return `<div class="pending-item"><div class="pending-item-left"><span class="pending-badge">${w.coin}</span><div class="pending-item-info"><span class="pending-amount">${w.amount.toLocaleString(undefined, { maximumFractionDigits: 8 })} ${w.coin}</span><span class="pending-coin">${isPartial ? `$${w.remainingUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })} pending of $${w.originalUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })} (${burnedPercent}% burned)` : `$${w.originalUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}`}</span></div></div><div class="pending-item-right"><div class="pending-date">${w.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${w.date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div><div class="pending-status">${isPartial ? '🔥 Partially burned' : '⏳ Awaiting burn'}</div></div></div>`; }).join('');
       container.innerHTML = html;
     }
 
-    async function fetchQuaiBalance(addr) { const r = await fetch('https://rpc.quai.network/cyprus1/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'quai_getBalance', params: [addr, 'latest'], id: 1 }) }); const d = await r.json(); if (d.result) return parseInt(d.result, 16) / 1e18; throw new Error('QUAI RPC failed'); }
-    async function fetchQuaiBlockNumber() { const r = await fetch('https://rpc.quai.network/cyprus1/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'quai_blockNumber', params: [], id: 1 }) }); const d = await r.json(); if (d.result) return parseInt(d.result, 16); throw new Error('Failed to get block number'); }
-    async function fetchQuaiBalanceAtBlock(addr, blockHex) { const r = await fetch('https://rpc.quai.network/cyprus1/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'quai_getBalance', params: [addr, blockHex], id: 1 }) }); const d = await r.json(); return d.result ? parseInt(d.result, 16) / 1e18 : null; }
+    async function fetchQuaiBalance(address) {
+      const response = await fetch('https://rpc.quai.network/cyprus1/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'quai_getBalance', params: [address, 'latest'], id: 1 }) });
+      const data = await response.json();
+      if (data.result) return parseInt(data.result, 16) / 1e18;
+      throw new Error('QUAI RPC failed');
+    }
 
-    async function fetchQuaiBalanceHistory(addr, days) {
-      const BLOCKS_PER_DAY = 17280, targetPoints = 100;
+    async function fetchQuaiBlockNumber() {
+      const response = await fetch('https://rpc.quai.network/cyprus1/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'quai_blockNumber', params: [], id: 1 }) });
+      const data = await response.json();
+      if (data.result) return parseInt(data.result, 16);
+      throw new Error('Failed to get block number');
+    }
+
+    async function fetchQuaiBalanceAtBlock(address, blockHex) {
+      const response = await fetch('https://rpc.quai.network/cyprus1/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'quai_getBalance', params: [address, blockHex], id: 1 }) });
+      const data = await response.json();
+      return data.result ? parseInt(data.result, 16) / 1e18 : null;
+    }
+
+    async function fetchQuaiBalanceHistory(address, days) {
+      const BLOCKS_PER_DAY = 17280, targetDataPoints = 100;
       try {
         const currentBlock = await fetchQuaiBlockNumber();
-        const totalBlocks = days * BLOCKS_PER_DAY, startBlock = Math.max(1, currentBlock - totalBlocks), stepSize = Math.max(90, Math.floor(totalBlocks / targetPoints));
-        const history = [];
+        const totalBlocks = days * BLOCKS_PER_DAY, startBlock = Math.max(1, currentBlock - totalBlocks), stepSize = Math.max(90, Math.floor(totalBlocks / targetDataPoints));
+        const historyData = [];
         for (let block = startBlock; block <= currentBlock; block += stepSize) {
-          const bal = await fetchQuaiBalanceAtBlock(addr, '0x' + block.toString(16));
-          if (bal !== null) { const msFromNow = ((currentBlock - block) / BLOCKS_PER_DAY) * 86400000; history.push({ block, date: new Date(Date.now() - msFromNow).toISOString(), balance: bal }); }
+          const blockHex = '0x' + block.toString(16), balance = await fetchQuaiBalanceAtBlock(address, blockHex);
+          if (balance !== null) { const blocksFromNow = currentBlock - block, msFromNow = (blocksFromNow / BLOCKS_PER_DAY) * 24 * 60 * 60 * 1000; historyData.push({ block, date: new Date(Date.now() - msFromNow).toISOString(), balance }); }
           await new Promise(r => setTimeout(r, 50));
         }
-        return history;
-      } catch (e) { return null; }
+        return historyData;
+      } catch (err) { console.error('Failed to fetch QUAI history:', err); return null; }
     }
 
     function createChart(exchange, historyData, days = 1) {
       const canvas = document.getElementById(`chart-${exchange}`), loadingEl = document.getElementById(`chart-loading-${exchange}`), infoEl = document.getElementById(`chart-info-${exchange}`);
-      if (!historyData || !Array.isArray(historyData) || historyData.length === 0) { loadingEl.innerHTML = 'No historical data available'; loadingEl.style.display = 'flex'; canvas.style.display = 'none'; return; }
-      const sorted = [...historyData].sort((a, b) => new Date(a.date) - new Date(b.date));
-      if (infoEl) { const first = new Date(sorted[0].date), last = new Date(sorted[sorted.length - 1].date); const fmt = days <= 1 ? { hour: '2-digit', minute: '2-digit' } : { month: 'short', day: 'numeric' }; infoEl.textContent = `(${sorted.length} points: ${first.toLocaleString('en-US', fmt)} - ${last.toLocaleString('en-US', fmt)})`; }
+      if (!historyData || !Array.isArray(historyData) || historyData.length === 0) { loadingEl.innerHTML = 'No historical data available'; loadingEl.style.display = 'flex'; canvas.style.display = 'none'; if (infoEl) infoEl.textContent = ''; return; }
+      const sortedData = [...historyData].sort((a, b) => new Date(a.date) - new Date(b.date));
+      if (sortedData.length === 0) { loadingEl.innerHTML = `No data available`; loadingEl.style.display = 'flex'; canvas.style.display = 'none'; if (infoEl) infoEl.textContent = ''; return; }
+      if (infoEl) { const firstDate = new Date(sortedData[0].date), lastDate = new Date(sortedData[sortedData.length - 1].date); let dateFormat = days <= 1 ? { hour: '2-digit', minute: '2-digit' } : { month: 'short', day: 'numeric' }; infoEl.textContent = `(${sortedData.length} points: ${firstDate.toLocaleString('en-US', dateFormat)} - ${lastDate.toLocaleString('en-US', dateFormat)})`; }
       loadingEl.style.display = 'none'; canvas.style.display = 'block';
-      const labels = sorted.map(d => { const dt = new Date(d.date); return days <= 1 ? dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : days <= 7 ? dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit' }) : dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); });
-      const values = sorted.map(d => d.balance);
+      const labels = sortedData.map(d => { const date = new Date(d.date); if (days <= 1) return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }); else if (days <= 7) return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit' }); return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); });
+      const values = sortedData.map(d => d.balance);
       if (quaiCharts[exchange]) quaiCharts[exchange].destroy();
-      const pointRadius = sorted.length <= 30 ? 3 : sorted.length <= 60 ? 2 : sorted.length <= 100 ? 1 : 0;
-      quaiCharts[exchange] = new Chart(canvas, { type: 'line', data: { labels, datasets: [{ label: 'Balance (QUAI)', data: values, borderColor: '#ff6666', backgroundColor: 'rgba(255, 102, 102, 0.1)', borderWidth: 2, fill: true, tension: 0.4, pointRadius, pointHoverRadius: 5, pointBackgroundColor: '#ff6666' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#2a1010', borderColor: '#ff6666', borderWidth: 1, titleColor: '#ffffff', bodyColor: '#ffaaaa', callbacks: { label: ctx => `${ctx.parsed.y.toLocaleString(undefined, { maximumFractionDigits: 2 })} QUAI` } } }, scales: { x: { grid: { color: 'rgba(255, 102, 102, 0.1)' }, ticks: { color: '#aa8888', font: { family: 'VT323', size: 12 }, maxTicksLimit: 8 } }, y: { grid: { color: 'rgba(255, 102, 102, 0.1)' }, ticks: { color: '#aa8888', font: { family: 'VT323', size: 12 }, callback: v => v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(1)+'K' : v.toFixed(0) } } }, interaction: { intersect: false, mode: 'index' } } });
+      const pointRadius = sortedData.length <= 30 ? 3 : sortedData.length <= 60 ? 2 : sortedData.length <= 100 ? 1 : 0;
+      quaiCharts[exchange] = new Chart(canvas, { type: 'line', data: { labels, datasets: [{ label: 'Balance (QUAI)', data: values, borderColor: '#ff6666', backgroundColor: 'rgba(255, 102, 102, 0.1)', borderWidth: 2, fill: true, tension: 0.4, pointRadius, pointHoverRadius: 5, pointBackgroundColor: '#ff6666', pointHoverBackgroundColor: '#ff6666' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#2a1010', borderColor: '#ff6666', borderWidth: 1, titleColor: '#ffffff', bodyColor: '#ffaaaa', callbacks: { label: ctx => `${ctx.parsed.y.toLocaleString(undefined, { maximumFractionDigits: 2 })} QUAI` } } }, scales: { x: { grid: { color: 'rgba(255, 102, 102, 0.1)' }, ticks: { color: '#aa8888', font: { family: 'VT323', size: 12 }, maxTicksLimit: 8 } }, y: { grid: { color: 'rgba(255, 102, 102, 0.1)' }, ticks: { color: '#aa8888', font: { family: 'VT323', size: 12 }, callback: v => v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(1)+'K' : v.toFixed(0) } } }, interaction: { intersect: false, mode: 'index' } } });
+    }
+
+    async function fetchBalance(wallet) {
+      const el = document.getElementById(`balance-${wallet.coin}`), sourceEl = document.getElementById(`source-${wallet.coin}`);
+      try {
+        const result = await ({ RVN: fetchRVN, BCH: fetchBCH, LTC: fetchLTC, DOGE: fetchDOGE }[wallet.coin](wallet.address));
+        balances[wallet.coin] = result.balance;
+        const usdValue = result.balance * (prices[wallet.coin] || 0);
+        el.innerHTML = `<p class="wallet-balance">${result.balance.toLocaleString(undefined, { maximumFractionDigits: 8 })}<span class="wallet-balance-coin">${wallet.coin}</span></p><p class="wallet-usd">$${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>`;
+        sourceEl.textContent = `via ${result.source}`;
+      } catch (err) { console.error(`Failed to fetch ${wallet.coin}:`, err); el.innerHTML = `<p class="wallet-error">FAILED TO LOAD</p>`; sourceEl.textContent = 'API error'; balances[wallet.coin] = 0; }
     }
 
     async function fetchQuaiWalletData(wallet, days = 1, forceRefresh = false) {
@@ -700,145 +693,130 @@
       try {
         const balance = await fetchQuaiBalance(wallet.address);
         quaiBalances[wallet.exchange] = balance;
-        const usd = balance * (prices['QUAI'] || 0);
-        el.innerHTML = `<p class="wallet-balance">${balance.toLocaleString(undefined, { maximumFractionDigits: 4 })}<span class="wallet-balance-coin">QUAI</span></p><p class="wallet-usd">$${usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>`;
-        let history = !forceRefresh ? getCachedHistory(wallet.exchange, days) : null;
+        const usdValue = balance * (prices['QUAI'] || 0);
+        el.innerHTML = `<p class="wallet-balance">${balance.toLocaleString(undefined, { maximumFractionDigits: 4 })}<span class="wallet-balance-coin">QUAI</span></p><p class="wallet-usd">$${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>`;
+        let history = null;
+        if (!forceRefresh) history = getCachedHistory(wallet.exchange, days);
         if (history) { quaiHistoryData[wallet.exchange] = history; createChart(wallet.exchange, history, days); }
-        else {
-          const loadingEl = document.getElementById(`chart-loading-${wallet.exchange}`);
-          if (loadingEl) { loadingEl.style.display = 'flex'; loadingEl.innerHTML = `<div class="spinner" style="margin-right: 8px;"></div>Loading history...`; }
-          history = await fetchQuaiBalanceHistory(wallet.address, days);
-          quaiHistoryData[wallet.exchange] = history;
-          setCachedHistory(wallet.exchange, days, history);
-          createChart(wallet.exchange, history, days);
-        }
-      } catch (e) { el.innerHTML = `<p class="wallet-error">FAILED TO LOAD</p>`; quaiBalances[wallet.exchange] = 0; document.getElementById(`chart-loading-${wallet.exchange}`).innerHTML = 'Failed to load chart'; }
+        else { const loadingEl = document.getElementById(`chart-loading-${wallet.exchange}`); if (loadingEl) { loadingEl.style.display = 'flex'; loadingEl.innerHTML = `<div class="spinner" style="margin-right: 8px;"></div>Loading history...`; } history = await fetchQuaiBalanceHistory(wallet.address, days); quaiHistoryData[wallet.exchange] = history; setCachedHistory(wallet.exchange, days, history); createChart(wallet.exchange, history, days); }
+      } catch (err) { console.error(`Failed to fetch ${wallet.exchange} QUAI:`, err); el.innerHTML = `<p class="wallet-error">FAILED TO LOAD</p>`; quaiBalances[wallet.exchange] = 0; document.getElementById(`chart-loading-${wallet.exchange}`).innerHTML = 'Failed to load chart'; }
     }
 
-    // ========== EMISSIONS FUNCTIONS ==========
-    async function fetchCurrentBlockNumber() { 
-      try { 
-        const d = await fetchRpcWithProxy(CUSTOM_RPC_URL, 'quai_blockNumber', []); 
-        return d.result ? parseInt(d.result, 16) : null; 
-      } catch (e) { 
-        console.error('Failed to fetch block number:', e);
-        return null; 
-      } 
+    function updateTotal() {
+      let total = 0;
+      wallets.forEach(w => total += (balances[w.coin] || 0) * (prices[w.coin] || 0));
+      document.getElementById('total-usd').textContent = `$${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
     }
-    async function fetchMiningInfoAtBlock(blockNumber) { 
-      try { 
-        const d = await fetchRpcWithProxy(CUSTOM_RPC_URL, 'quai_getMiningInfo', ['0x' + blockNumber.toString(16), true]); 
-        return d.result || null; 
-      } catch (e) { 
-        return null; 
-      } 
+
+    // ========== EMISSIONS FUNCTIONS (local RPC only) ==========
+    async function fetchEmissionsRpc(method, params) {
+      if (!CUSTOM_RPC_URL) return null;
+      try {
+        const response = await fetch(CUSTOM_RPC_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) });
+        if (response.ok) return await response.json();
+      } catch (e) { console.log('Emissions RPC failed:', e.message); }
+      return null;
     }
+
+    async function fetchEmissionsBlockNumber() { const d = await fetchEmissionsRpc('quai_blockNumber', []); return d?.result ? parseInt(d.result, 16) : null; }
+    async function fetchMiningInfoAtBlock(blockNumber) { const d = await fetchEmissionsRpc('quai_getMiningInfo', ['0x' + blockNumber.toString(16), true]); return d?.result || null; }
+    async function fetchBurnBalanceAtBlock(blockNumber) { const d = await fetchEmissionsRpc('quai_getBalance', [BURN_WALLET, '0x' + blockNumber.toString(16)]); return d?.result ? parseInt(d.result, 16) / 1e18 : null; }
     function calculateDailyEmissions(info) { const sha = parseFloat(info.avgShaShareTime) || 1, scrypt = parseFloat(info.avgScryptShareTime) || 1, kawpow = parseFloat(info.avgKawpowShareTime) || 1, reward = Number(BigInt(info.workshareReward || '0')) / 1e18; return (86400/sha + 86400/scrypt + 86400/kawpow) * reward; }
+    function interpolateValue(data, targetBlock, key) { if (data.length === 0) return 0; if (targetBlock <= data[0].block) return data[0][key]; if (targetBlock >= data[data.length - 1].block) return data[data.length - 1][key]; for (let i = 0; i < data.length - 1; i++) { if (targetBlock >= data[i].block && targetBlock <= data[i + 1].block) { const ratio = (targetBlock - data[i].block) / (data[i + 1].block - data[i].block); return data[i][key] + (data[i + 1][key] - data[i][key]) * ratio; } } return data[data.length - 1][key]; }
 
     async function fetchEmissionsVsBurnsData(forceRefresh = false) {
       const loadingEl = document.getElementById('emissions-loading'), loadingText = document.getElementById('emissions-loading-text'), progressBar = document.getElementById('emissions-progress-bar'), canvas = document.getElementById('emissions-chart');
-      if (!forceRefresh) { const cached = getCachedEmissions(); if (cached && cached.length > 0) { emissionsData = cached; renderEmissionsChart(); renderCirculatingChart(); renderAlignedChart(); return; } }
-      loadingText.textContent = 'Fetching current block...';
-      const currentBlock = await fetchCurrentBlockNumber();
-      if (!currentBlock || currentBlock < EMISSIONS_START_BLOCK) { 
-        loadingText.textContent = CUSTOM_RPC_URL.includes('20.81') ? 'Could not connect to RPC' : 'Emissions data requires local RPC (run locally for full features)'; 
-        return; 
-      }
       
-      // Test if getMiningInfo is available
-      const testMiningInfo = await fetchMiningInfoAtBlock(currentBlock);
-      if (!testMiningInfo) {
-        loadingText.textContent = 'Mining info not available on public RPC. Run locally for emissions graphs.';
+      // Check if we're on production (no local RPC access)
+      if (!CUSTOM_RPC_URL) {
+        loadingText.textContent = 'Emissions graphs require local RPC node (run locally for full features)';
         progressBar.style.width = '0%';
+        document.getElementById('circulating-loading').querySelector('span').textContent = 'Requires local RPC';
+        document.getElementById('aligned-loading').querySelector('span').textContent = 'Requires local RPC';
         return;
       }
       
+      if (!forceRefresh) { const cached = getCachedEmissions(); if (cached && cached.length > 0) { emissionsData = cached; renderEmissionsChart(); renderCirculatingChart(); renderAlignedChart(); return; } }
+      loadingText.textContent = 'Fetching current block...';
+      const currentBlock = await fetchEmissionsBlockNumber();
+      if (!currentBlock || currentBlock < EMISSIONS_START_BLOCK) { loadingText.textContent = 'Could not connect to RPC'; return; }
+      
+      // Test if getMiningInfo is available
+      const testMiningInfo = await fetchMiningInfoAtBlock(currentBlock);
+      if (!testMiningInfo) { loadingText.textContent = 'getMiningInfo not available on this RPC'; return; }
+      
       document.getElementById('emissions-block-range').textContent = `Block range: ${EMISSIONS_START_BLOCK.toLocaleString()} → ${currentBlock.toLocaleString()}`;
-      const totalBlocks = currentBlock - EMISSIONS_START_BLOCK, dataPoints = 50, stepSize = Math.floor(totalBlocks / dataPoints);
+      const dataPoints = 50, blockRange = currentBlock - EMISSIONS_START_BLOCK, blockStep = Math.floor(blockRange / dataPoints);
       emissionsData = [];
-      let cumulativeEmissions = 0, prevBlock = EMISSIONS_START_BLOCK;
+      let cumulativeEmissions = 0;
+      
       for (let i = 0; i <= dataPoints; i++) {
-        const blockNumber = Math.min(EMISSIONS_START_BLOCK + (i * stepSize), currentBlock);
+        const block = EMISSIONS_START_BLOCK + (i * blockStep);
         const progress = Math.round((i / dataPoints) * 100);
-        loadingText.textContent = `Fetching block ${blockNumber.toLocaleString()}... (${progress}%)`;
+        loadingText.textContent = `Fetching block ${block.toLocaleString()}... (${progress}%)`;
         progressBar.style.width = `${progress}%`;
-        const miningInfo = await fetchMiningInfoAtBlock(blockNumber);
-        const burnBalance = await fetchBurnWalletBalanceAtBlock('0x' + blockNumber.toString(16));
+        
+        const [miningInfo, burnBalance] = await Promise.all([fetchMiningInfoAtBlock(block), fetchBurnBalanceAtBlock(block)]);
         if (miningInfo) {
-          const daily = calculateDailyEmissions(miningInfo);
-          const blocksDelta = blockNumber - prevBlock, avgBlockTime = parseFloat(miningInfo.avgBlockTime) || 5, daysElapsed = (blocksDelta * avgBlockTime) / 86400;
-          if (i > 0) cumulativeEmissions += daily * daysElapsed;
-          emissionsData.push({ block: blockNumber, dailyEmissions: daily, cumulativeEmissions, cumulativeBurns: burnBalance || 0, miningInfo });
-          prevBlock = blockNumber;
+          const dailyEmissions = calculateDailyEmissions(miningInfo);
+          if (i > 0) { const blocksDelta = block - emissionsData[emissionsData.length - 1].block; cumulativeEmissions += dailyEmissions * (blocksDelta / 17280); }
+          emissionsData.push({ block, cumulativeEmissions, cumulativeBurns: burnBalance || 0 });
         }
         await new Promise(r => setTimeout(r, 100));
       }
+      
       setCachedEmissions(emissionsData);
-      renderEmissionsChart(); renderCirculatingChart(); renderAlignedChart();
+      renderEmissionsChart();
+      renderCirculatingChart();
+      renderAlignedChart();
     }
 
     function renderEmissionsChart() {
-      const loadingEl = document.getElementById('emissions-loading'), canvas = document.getElementById('emissions-chart');
-      if (!emissionsData || emissionsData.length === 0) return;
+      const canvas = document.getElementById('emissions-chart'), loadingEl = document.getElementById('emissions-loading');
+      if (!emissionsData || emissionsData.length === 0) { loadingEl.innerHTML = '<span>No emissions data available</span>'; return; }
       loadingEl.style.display = 'none'; canvas.style.display = 'block';
       const latest = emissionsData[emissionsData.length - 1];
-      document.getElementById('total-emissions').textContent = `${(latest.cumulativeEmissions / 1e6).toFixed(2)}M QUAI`;
-      document.getElementById('total-burns-stat').textContent = `${(latest.cumulativeBurns / 1e6).toFixed(2)}M QUAI`;
-      document.getElementById('net-supply').textContent = `${((latest.cumulativeEmissions - latest.cumulativeBurns) / 1e6).toFixed(2)}M QUAI`;
-      const labels = emissionsData.map(d => `Block ${(d.block / 1e6).toFixed(2)}M`);
-      const emVals = emissionsData.map(d => d.cumulativeEmissions / 1e6), buVals = emissionsData.map(d => d.cumulativeBurns / 1e6);
+      document.getElementById('total-emissions').textContent = latest.cumulativeEmissions.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' QUAI';
+      document.getElementById('total-burns-stat').textContent = latest.cumulativeBurns.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' QUAI';
+      document.getElementById('net-supply').textContent = (latest.cumulativeEmissions - latest.cumulativeBurns).toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' QUAI';
+      const labels = emissionsData.map(d => d.block.toLocaleString()), emissionsValues = emissionsData.map(d => d.cumulativeEmissions), burnsValues = emissionsData.map(d => d.cumulativeBurns);
       if (emissionsChart) emissionsChart.destroy();
-      emissionsChart = new Chart(canvas, { type: 'line', data: { labels, datasets: [{ label: 'Emissions', data: emVals, borderColor: '#66ccff', backgroundColor: 'rgba(102,204,255,0.1)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0 }, { label: 'Burns', data: buVals, borderColor: '#ff9966', backgroundColor: 'rgba(255,153,102,0.1)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}M QUAI` } } }, scales: { x: { grid: { color: 'rgba(102,204,255,0.1)' }, ticks: { color: '#88aabb', maxTicksLimit: 8 } }, y: { grid: { color: 'rgba(102,204,255,0.1)' }, ticks: { color: '#88aabb', callback: v => v.toFixed(1)+'M' } } }, interaction: { intersect: false, mode: 'index' } } });
+      emissionsChart = new Chart(canvas, { type: 'line', data: { labels, datasets: [{ label: 'Cumulative Emissions', data: emissionsValues, borderColor: '#66ccff', backgroundColor: 'rgba(102, 204, 255, 0.1)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0 }, { label: 'Cumulative Burns', data: burnsValues, borderColor: '#ff9966', backgroundColor: 'rgba(255, 153, 102, 0.1)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0a1520', borderColor: '#205a6b', borderWidth: 1, titleColor: '#ffffff', bodyColor: '#88ccee', callbacks: { title: ctx => `Block ${ctx[0].label}`, label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString(undefined, { maximumFractionDigits: 0 })} QUAI` } } }, scales: { x: { grid: { color: 'rgba(102, 204, 255, 0.1)' }, ticks: { color: '#88aabb', font: { family: 'VT323', size: 12 }, maxTicksLimit: 6 } }, y: { grid: { color: 'rgba(102, 204, 255, 0.1)' }, ticks: { color: '#88aabb', font: { family: 'VT323', size: 12 }, callback: v => v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(0)+'K' : v.toFixed(0) } } }, interaction: { intersect: false, mode: 'index' } } });
     }
 
     function renderCirculatingChart() {
-      const loadingEl = document.getElementById('circulating-loading'), canvas = document.getElementById('circulating-chart');
+      const canvas = document.getElementById('circulating-chart'), loadingEl = document.getElementById('circulating-loading');
       if (!emissionsData || emissionsData.length === 0) return;
       loadingEl.style.display = 'none'; canvas.style.display = 'block';
-      const circData = emissionsData.map(d => {
-        const unlockBlock = d.block - LOCKUP_BLOCKS;
-        let unlocked = 0;
-        if (unlockBlock > EMISSIONS_START_BLOCK) { for (let i = emissionsData.length - 1; i >= 0; i--) { if (emissionsData[i].block <= unlockBlock) { const prev = emissionsData[i], next = emissionsData[i + 1]; if (next && next.block > unlockBlock) { const ratio = (unlockBlock - prev.block) / (next.block - prev.block); unlocked = prev.cumulativeEmissions + ratio * (next.cumulativeEmissions - prev.cumulativeEmissions); } else unlocked = prev.cumulativeEmissions; break; } } }
-        return { block: d.block, unlocked, burns: d.cumulativeBurns, net: unlocked - d.cumulativeBurns };
-      });
+      const circData = emissionsData.map(d => { const unlockBlock = d.block - LOCKUP_BLOCKS; const unlockedEmissions = unlockBlock >= EMISSIONS_START_BLOCK ? interpolateValue(emissionsData, unlockBlock, 'cumulativeEmissions') : 0; return { block: d.block, unlockedEmissions, burns: d.cumulativeBurns }; });
       const latest = circData[circData.length - 1];
-      document.getElementById('unlocked-emissions').textContent = `${(latest.unlocked / 1e6).toFixed(2)}M QUAI`;
-      document.getElementById('circ-total-burns').textContent = `${(latest.burns / 1e6).toFixed(2)}M QUAI`;
-      document.getElementById('net-circulating').textContent = `${(latest.net / 1e6).toFixed(2)}M QUAI`;
-      const labels = circData.map(d => `Block ${(d.block / 1e6).toFixed(2)}M`);
-      const unVals = circData.map(d => d.unlocked / 1e6), buVals = circData.map(d => d.burns / 1e6);
+      document.getElementById('unlocked-emissions').textContent = latest.unlockedEmissions.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' QUAI';
+      document.getElementById('circ-total-burns').textContent = latest.burns.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' QUAI';
+      document.getElementById('net-circulating').textContent = (latest.unlockedEmissions - latest.burns).toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' QUAI';
       if (circulatingChart) circulatingChart.destroy();
-      circulatingChart = new Chart(canvas, { type: 'line', data: { labels, datasets: [{ label: 'Unlocked', data: unVals, borderColor: '#99ff66', backgroundColor: 'rgba(153,255,102,0.1)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0 }, { label: 'Burns', data: buVals, borderColor: '#ff9966', backgroundColor: 'rgba(255,153,102,0.1)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}M QUAI` } } }, scales: { x: { grid: { color: 'rgba(153,255,102,0.1)' }, ticks: { color: '#88bb88', maxTicksLimit: 8 } }, y: { grid: { color: 'rgba(153,255,102,0.1)' }, ticks: { color: '#88bb88', callback: v => v.toFixed(1)+'M' } } }, interaction: { intersect: false, mode: 'index' } } });
+      circulatingChart = new Chart(canvas, { type: 'line', data: { labels: circData.map(d => d.block.toLocaleString()), datasets: [{ label: 'Unlocked Emissions', data: circData.map(d => d.unlockedEmissions), borderColor: '#99ff66', backgroundColor: 'rgba(153, 255, 102, 0.1)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0 }, { label: 'Cumulative Burns', data: circData.map(d => d.burns), borderColor: '#ff9966', backgroundColor: 'rgba(255, 153, 102, 0.1)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#101a08', borderColor: '#4a6b20', borderWidth: 1, titleColor: '#ffffff', bodyColor: '#99ff66' } }, scales: { x: { grid: { color: 'rgba(153, 255, 102, 0.1)' }, ticks: { color: '#88bb88', font: { family: 'VT323', size: 12 }, maxTicksLimit: 6 } }, y: { grid: { color: 'rgba(153, 255, 102, 0.1)' }, ticks: { color: '#88bb88', font: { family: 'VT323', size: 12 }, callback: v => v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(0)+'K' : v.toFixed(0) } } }, interaction: { intersect: false, mode: 'index' } } });
     }
 
     function renderAlignedChart() {
-      const loadingEl = document.getElementById('aligned-loading'), canvas = document.getElementById('aligned-chart');
+      const canvas = document.getElementById('aligned-chart'), loadingEl = document.getElementById('aligned-loading');
       if (!emissionsData || emissionsData.length === 0) return;
-      let baselineBurns = 0;
-      for (let i = 0; i < emissionsData.length; i++) { if (emissionsData[i].block >= FRESH_START_BLOCK) { if (i > 0 && emissionsData[i].block > FRESH_START_BLOCK) { const prev = emissionsData[i-1], curr = emissionsData[i]; baselineBurns = prev.cumulativeBurns + ((FRESH_START_BLOCK - prev.block) / (curr.block - prev.block)) * (curr.cumulativeBurns - prev.cumulativeBurns); } else baselineBurns = emissionsData[i].cumulativeBurns; break; } baselineBurns = emissionsData[i].cumulativeBurns; }
-      function getBurnsAtBlock(target) { for (let i = 0; i < emissionsData.length; i++) { if (emissionsData[i].block >= target) { if (i > 0 && emissionsData[i].block > target) { const prev = emissionsData[i-1], curr = emissionsData[i]; return prev.cumulativeBurns + ((target - prev.block) / (curr.block - prev.block)) * (curr.cumulativeBurns - prev.cumulativeBurns); } return emissionsData[i].cumulativeBurns; } } return emissionsData[emissionsData.length - 1].cumulativeBurns; }
-      const lastBlock = emissionsData[emissionsData.length - 1].block;
-      const alignedData = emissionsData.filter(d => d.block >= FRESH_START_BLOCK && d.block <= lastBlock - BURN_LAG_BLOCKS).map(d => {
-        const unlockBlock = d.block - LOCKUP_BLOCKS;
-        let unlocked = 0;
-        if (unlockBlock > EMISSIONS_START_BLOCK) { for (let i = emissionsData.length - 1; i >= 0; i--) { if (emissionsData[i].block <= unlockBlock) { const prev = emissionsData[i], next = emissionsData[i + 1]; if (next && next.block > unlockBlock) { const ratio = (unlockBlock - prev.block) / (next.block - prev.block); unlocked = prev.cumulativeEmissions + ratio * (next.cumulativeEmissions - prev.cumulativeEmissions); } else unlocked = prev.cumulativeEmissions; break; } } }
-        const futureBurns = getBurnsAtBlock(d.block + BURN_LAG_BLOCKS) - baselineBurns;
-        return { block: d.block, unlocked, burns: futureBurns, net: unlocked - futureBurns };
-      });
-      if (alignedData.length === 0) { document.getElementById('aligned-loading').querySelector('span').textContent = 'Not enough data yet'; return; }
       loadingEl.style.display = 'none'; canvas.style.display = 'block';
+      const latestBlock = emissionsData[emissionsData.length - 1].block;
+      const burnBaseline = interpolateValue(emissionsData, FRESH_START_BLOCK, 'cumulativeBurns');
+      const alignedData = emissionsData.filter(d => d.block >= FRESH_START_BLOCK && d.block <= latestBlock - BURN_LAG_BLOCKS).map(d => {
+        const unlockBlock = d.block - LOCKUP_BLOCKS, unlockedEmissions = unlockBlock >= EMISSIONS_START_BLOCK ? interpolateValue(emissionsData, unlockBlock, 'cumulativeEmissions') : 0;
+        const alignedBurnBlock = d.block + BURN_LAG_BLOCKS, alignedBurns = interpolateValue(emissionsData, alignedBurnBlock, 'cumulativeBurns') - burnBaseline;
+        return { block: d.block, unlockedEmissions, alignedBurns, netAligned: unlockedEmissions - alignedBurns };
+      });
+      if (alignedData.length === 0) return;
       const latest = alignedData[alignedData.length - 1];
-      document.getElementById('aligned-unlocked').textContent = `${(latest.unlocked / 1e6).toFixed(2)}M QUAI`;
-      document.getElementById('aligned-burns').textContent = `${(latest.burns / 1e6).toFixed(2)}M QUAI`;
-      document.getElementById('aligned-net').textContent = `${(latest.net / 1e6).toFixed(2)}M QUAI`;
-      const labels = alignedData.map(d => `Block ${(d.block / 1e6).toFixed(2)}M`);
-      const unVals = alignedData.map(d => d.unlocked / 1e6), buVals = alignedData.map(d => d.burns / 1e6), netVals = alignedData.map(d => d.net / 1e6);
+      document.getElementById('aligned-unlocked').textContent = latest.unlockedEmissions.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' QUAI';
+      document.getElementById('aligned-burns').textContent = latest.alignedBurns.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' QUAI';
+      document.getElementById('aligned-net').textContent = latest.netAligned.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' QUAI';
       if (alignedChart) alignedChart.destroy();
-      alignedChart = new Chart(canvas, { type: 'line', data: { labels, datasets: [{ label: 'Unlocked', data: unVals, borderColor: '#99ff66', backgroundColor: 'rgba(153,255,102,0.05)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0 }, { label: 'Burns', data: buVals, borderColor: '#ff9966', backgroundColor: 'rgba(255,153,102,0.05)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0 }, { label: 'Net', data: netVals, borderColor: '#cc99ff', backgroundColor: 'rgba(204,153,255,0.1)', borderWidth: 3, fill: true, tension: 0.4, pointRadius: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}M QUAI` } } }, scales: { x: { grid: { color: 'rgba(204,153,255,0.1)' }, ticks: { color: '#aa88bb', maxTicksLimit: 8 } }, y: { grid: { color: 'rgba(204,153,255,0.1)' }, ticks: { color: '#aa88bb', callback: v => v.toFixed(1)+'M' } } }, interaction: { intersect: false, mode: 'index' } } });
+      alignedChart = new Chart(canvas, { type: 'line', data: { labels: alignedData.map(d => d.block.toLocaleString()), datasets: [{ label: 'Unlocked Emissions', data: alignedData.map(d => d.unlockedEmissions), borderColor: '#99ff66', backgroundColor: 'rgba(153, 255, 102, 0.1)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0 }, { label: 'Burns (aligned)', data: alignedData.map(d => d.alignedBurns), borderColor: '#ff9966', backgroundColor: 'rgba(255, 153, 102, 0.1)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 0 }, { label: 'Net (aligned)', data: alignedData.map(d => d.netAligned), borderColor: '#cc99ff', backgroundColor: 'rgba(204, 153, 255, 0.1)', borderWidth: 2, fill: false, tension: 0.4, pointRadius: 0, borderDash: [5, 5] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#100818', borderColor: '#4a206b', borderWidth: 1, titleColor: '#ffffff', bodyColor: '#cc99ff' } }, scales: { x: { grid: { color: 'rgba(204, 153, 255, 0.1)' }, ticks: { color: '#aa88bb', font: { family: 'VT323', size: 12 }, maxTicksLimit: 6 } }, y: { grid: { color: 'rgba(204, 153, 255, 0.1)' }, ticks: { color: '#aa88bb', font: { family: 'VT323', size: 12 }, callback: v => v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(0)+'K' : v.toFixed(0) } } }, interaction: { intersect: false, mode: 'index' } } });
     }
-
-    function updateTotal() { let total = 0; wallets.forEach(w => total += (balances[w.coin] || 0) * (prices[w.coin] || 0)); document.getElementById('total-usd').textContent = `$${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`; document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`; }
-    function updateBurnRefreshIndicator() { const el = document.getElementById('burn-auto-refresh'); if (el && lastBurnRefreshTime) el.textContent = `(last: ${lastBurnRefreshTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}, auto-refreshes every 5min)`; }
 
     async function fetchAllBalances(forceRefresh = false) {
       const btn = document.getElementById('refresh-btn'), icon = document.getElementById('refresh-icon'), text = document.getElementById('refresh-text');
@@ -846,12 +824,12 @@
       withdrawalsLoaded = false; burnDepositsLoaded = false;
       document.getElementById('pending-burns').innerHTML = `<div class="loading-spinner" style="justify-content: center; padding: 20px;"><div class="spinner"></div><span>Calculating pending burns...</span></div>`;
       await fetchPrices();
-      for (const w of wallets) { await fetchBalance(w); await new Promise(r => setTimeout(r, 400)); }
+      for (const wallet of wallets) { await fetchBalance(wallet); await new Promise(r => setTimeout(r, 400)); }
       updateTotal();
       fetchAllWithdrawals(forceRefresh);
       fetchBurnDeposits(forceRefresh);
-      for (const w of quaiWallets) { await fetchQuaiWalletData(w, selectedTimeRange[w.exchange] || 1); await new Promise(r => setTimeout(r, 400)); }
       fetchEmissionsVsBurnsData(forceRefresh);
+      for (const wallet of quaiWallets) { await fetchQuaiWalletData(wallet, selectedTimeRange[wallet.exchange] || 1); await new Promise(r => setTimeout(r, 400)); }
       updateTotal();
       btn.disabled = false; icon.classList.remove('spinning'); text.textContent = 'Refresh';
     }
@@ -861,9 +839,9 @@
     const AUTO_REFRESH_INTERVAL = 5 * 60 * 1000;
     let nextRefreshTime = Date.now() + AUTO_REFRESH_INTERVAL;
     function resetRefreshCountdown() { nextRefreshTime = Date.now() + AUTO_REFRESH_INTERVAL; }
-    function updateRefreshCountdown() { const remaining = Math.max(0, nextRefreshTime - Date.now()); const min = Math.floor(remaining / 60000), sec = Math.floor((remaining % 60000) / 1000); document.getElementById('next-refresh').textContent = `Auto-refresh in ${min}:${sec.toString().padStart(2, '0')}`; }
+    function updateRefreshCountdown() { const remaining = Math.max(0, nextRefreshTime - Date.now()), minutes = Math.floor(remaining / 60000), seconds = Math.floor((remaining % 60000) / 1000); const el = document.getElementById('next-refresh'); if (el) el.textContent = `Auto-refresh in ${minutes}:${seconds.toString().padStart(2, '0')}`; }
     setInterval(updateRefreshCountdown, 1000);
-    setInterval(async () => { console.log('Auto-refreshing...'); resetRefreshCountdown(); withdrawalsLoaded = false; burnDepositsLoaded = false; document.getElementById('pending-burns').innerHTML = `<div class="loading-spinner" style="justify-content: center; padding: 20px;"><div class="spinner"></div><span>Auto-refreshing...</span></div>`; await Promise.all([fetchBurnDeposits(true), fetchAllWithdrawals(true)]); }, AUTO_REFRESH_INTERVAL);
+    setInterval(async () => { console.log('Auto-refreshing data...'); resetRefreshCountdown(); withdrawalsLoaded = false; burnDepositsLoaded = false; document.getElementById('pending-burns').innerHTML = `<div class="loading-spinner" style="justify-content: center; padding: 20px;"><div class="spinner"></div><span>Auto-refreshing...</span></div>`; await Promise.all([fetchBurnDeposits(true), fetchAllWithdrawals(true)]); }, AUTO_REFRESH_INTERVAL);
 
     renderWallets();
     renderQuaiWallets();
