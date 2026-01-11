@@ -271,9 +271,14 @@
   </div>
 
   <script>
-    const CORS_PROXIES = ['https://corsproxy.io/?', 'https://api.allorigins.win/raw?url=', 'https://proxy.cors.sh/'];
+    const CORS_PROXIES = [
+      'https://api.allorigins.win/raw?url='
+    ];
     let currentProxyIndex = 0;
-    const CUSTOM_RPC_URL = 'http://20.81.235.89:9200';
+    // Use custom RPC locally, public RPC on production (custom RPC needs HTTPS for production)
+    const LOCAL_RPC_URL = 'http://20.81.235.89:9200';
+    const PUBLIC_RPC_URL = 'https://rpc.quai.network/cyprus1/';
+    const CUSTOM_RPC_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? LOCAL_RPC_URL : PUBLIC_RPC_URL;
     const EMISSIONS_START_BLOCK = 5422063;
     const LOCKUP_BLOCKS = 241920;
     const BURN_LAG_BLOCKS = 25920;
@@ -306,11 +311,22 @@
     };
 
     async function fetchWithProxy(url) {
+      // Try direct first (works locally)
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          if (!data.message?.includes('Rate limit')) return data;
+        }
+      } catch (e) { /* Direct failed, try proxy */ }
+      
+      // Try proxies
       for (let i = 0; i < CORS_PROXIES.length; i++) {
         const proxyIndex = (currentProxyIndex + i) % CORS_PROXIES.length;
         const proxy = CORS_PROXIES[proxyIndex];
         try {
           const response = await fetch(`${proxy}${encodeURIComponent(url)}`);
+          if (!response.ok) continue;
           const data = await response.json();
           if (data.message && data.message.includes('Rate limit')) continue;
           currentProxyIndex = proxyIndex;
@@ -321,13 +337,25 @@
     }
 
     async function fetchRpcWithProxy(rpcUrl, method, params) {
-      try {
-        const response = await fetch(rpcUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) });
-        if (response.ok) return await response.json();
-      } catch (e) { console.log('Direct RPC failed, trying proxy...'); }
-      const proxy = CORS_PROXIES[0];
-      const response = await fetch(`${proxy}${encodeURIComponent(rpcUrl)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) });
-      return await response.json();
+      // If on HTTPS and RPC is HTTP, skip direct attempt
+      const isHttps = window.location.protocol === 'https:';
+      const rpcIsHttp = rpcUrl.startsWith('http://');
+      
+      if (!isHttps || !rpcIsHttp) {
+        try {
+          const response = await fetch(rpcUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) });
+          if (response.ok) return await response.json();
+        } catch (e) { console.log('Direct RPC failed, trying proxy...'); }
+      }
+      
+      // Try proxies
+      for (const proxy of CORS_PROXIES) {
+        try {
+          const response = await fetch(`${proxy}${encodeURIComponent(rpcUrl)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) });
+          if (response.ok) return await response.json();
+        } catch (e) { console.log(`Proxy ${proxy} failed`); }
+      }
+      throw new Error('All RPC attempts failed');
     }
 
     function getCachedHistory(exchange, days) { try { const c = localStorage.getItem(`quai_history_${exchange}_${days}`); if (c) { const { data, timestamp } = JSON.parse(c); if (Date.now() - timestamp < CACHE_DURATION) return data; } } catch (e) {} return null; }
@@ -373,7 +401,10 @@
     async function fetchPrices() {
       try {
         const ids = [...wallets.map(w => w.geckoId), 'quai-network'].join(',');
-        const data = await (await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`)).json();
+        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`;
+        let data;
+        try { const r = await fetch(url); if (r.ok) data = await r.json(); else throw new Error(); }
+        catch (e) { data = await fetchWithProxy(url); }
         wallets.forEach(w => { if (data[w.geckoId]) { prices[w.coin] = data[w.geckoId].usd; document.getElementById(`price-${w.coin}`).textContent = `$${prices[w.coin].toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 6 })} / ${w.coin}`; }});
         if (data['quai-network']) prices['QUAI'] = data['quai-network'].usd;
       } catch (e) { console.error('Failed to fetch prices:', e); }
@@ -381,8 +412,8 @@
 
     async function fetchRVN(addr) { const d = await fetchWithProxy(`https://rvn.cryptoscope.io/api/getaddress/?address=${addr}`); if (d?.balance !== undefined) return { balance: parseFloat(d.balance), source: 'CryptoScope' }; throw new Error('RVN API failed'); }
     async function fetchBCH(addr) { const d = await fetchWithProxy(`https://bchn.fullstack.cash/v5/electrumx/balance/bitcoincash:${addr}`); if (d.balance?.confirmed !== undefined) return { balance: (d.balance.confirmed + (d.balance.unconfirmed || 0)) / 1e8, source: 'FullStack.cash' }; throw new Error('BCH API failed'); }
-    async function fetchLTC(addr) { try { const r = await fetch(`https://api.blockcypher.com/v1/ltc/main/addrs/${addr}/balance`); if (r.ok) { const d = await r.json(); return { balance: d.balance / 1e8, source: 'BlockCypher' }; } } catch (e) {} const d = await fetchWithProxy(`https://api.blockcypher.com/v1/ltc/main/addrs/${addr}/balance`); return { balance: d.balance / 1e8, source: 'BlockCypher' }; }
-    async function fetchDOGE(addr) { try { const r = await fetch(`https://api.blockcypher.com/v1/doge/main/addrs/${addr}/balance`); if (r.ok) { const d = await r.json(); return { balance: d.balance / 1e8, source: 'BlockCypher' }; } } catch (e) {} const d = await fetchWithProxy(`https://api.blockcypher.com/v1/doge/main/addrs/${addr}/balance`); return { balance: d.balance / 1e8, source: 'BlockCypher' }; }
+    async function fetchLTC(addr) { const d = await fetchWithProxy(`https://api.blockcypher.com/v1/ltc/main/addrs/${addr}/balance`); return { balance: d.balance / 1e8, source: 'BlockCypher' }; }
+    async function fetchDOGE(addr) { const d = await fetchWithProxy(`https://api.blockcypher.com/v1/doge/main/addrs/${addr}/balance`); return { balance: d.balance / 1e8, source: 'BlockCypher' }; }
 
     async function fetchBalance(wallet) {
       const el = document.getElementById(`balance-${wallet.coin}`);
@@ -399,7 +430,9 @@
     async function fetchHistoricalQuaiPrices(startTs, endTs) {
       try {
         const url = `https://api.coingecko.com/api/v3/coins/quai-network/market_chart/range?vs_currency=usd&from=${Math.floor(startTs/1000)}&to=${Math.floor(endTs/1000)}`;
-        const data = await (await fetch(url)).json();
+        let data;
+        try { const r = await fetch(url); if (r.ok) data = await r.json(); else throw new Error(); }
+        catch (e) { data = await fetchWithProxy(url); }
         if (data.prices && Array.isArray(data.prices)) return data.prices;
       } catch (e) { console.error('Failed to fetch historical QUAI prices:', e); }
       return null;
@@ -552,8 +585,7 @@
 
     async function fetchLTCWithdrawals(addr) {
       try {
-        let data;
-        try { const r = await fetch(`https://api.blockcypher.com/v1/ltc/main/addrs/${addr}/full?limit=20`); if (r.ok) data = await r.json(); else throw new Error(); } catch (e) { data = await fetchWithProxy(`https://api.blockcypher.com/v1/ltc/main/addrs/${addr}/full?limit=20`); }
+        const data = await fetchWithProxy(`https://api.blockcypher.com/v1/ltc/main/addrs/${addr}/full?limit=20`);
         if (!data || !data.txs) return [];
         const withdrawals = [];
         for (const tx of data.txs) {
@@ -566,8 +598,7 @@
 
     async function fetchDOGEWithdrawals(addr) {
       try {
-        let data;
-        try { const r = await fetch(`https://api.blockcypher.com/v1/doge/main/addrs/${addr}/full?limit=20`); if (r.ok) data = await r.json(); else throw new Error(); } catch (e) { data = await fetchWithProxy(`https://api.blockcypher.com/v1/doge/main/addrs/${addr}/full?limit=20`); }
+        const data = await fetchWithProxy(`https://api.blockcypher.com/v1/doge/main/addrs/${addr}/full?limit=20`);
         if (!data || !data.txs) return [];
         const withdrawals = [];
         for (const tx of data.txs) {
@@ -685,8 +716,23 @@
     }
 
     // ========== EMISSIONS FUNCTIONS ==========
-    async function fetchCurrentBlockNumber() { try { const d = await fetchRpcWithProxy(CUSTOM_RPC_URL, 'quai_blockNumber', []); return d.result ? parseInt(d.result, 16) : null; } catch (e) { return null; } }
-    async function fetchMiningInfoAtBlock(blockNumber) { try { const d = await fetchRpcWithProxy(CUSTOM_RPC_URL, 'quai_getMiningInfo', ['0x' + blockNumber.toString(16), true]); return d.result || null; } catch (e) { return null; } }
+    async function fetchCurrentBlockNumber() { 
+      try { 
+        const d = await fetchRpcWithProxy(CUSTOM_RPC_URL, 'quai_blockNumber', []); 
+        return d.result ? parseInt(d.result, 16) : null; 
+      } catch (e) { 
+        console.error('Failed to fetch block number:', e);
+        return null; 
+      } 
+    }
+    async function fetchMiningInfoAtBlock(blockNumber) { 
+      try { 
+        const d = await fetchRpcWithProxy(CUSTOM_RPC_URL, 'quai_getMiningInfo', ['0x' + blockNumber.toString(16), true]); 
+        return d.result || null; 
+      } catch (e) { 
+        return null; 
+      } 
+    }
     function calculateDailyEmissions(info) { const sha = parseFloat(info.avgShaShareTime) || 1, scrypt = parseFloat(info.avgScryptShareTime) || 1, kawpow = parseFloat(info.avgKawpowShareTime) || 1, reward = Number(BigInt(info.workshareReward || '0')) / 1e18; return (86400/sha + 86400/scrypt + 86400/kawpow) * reward; }
 
     async function fetchEmissionsVsBurnsData(forceRefresh = false) {
@@ -694,7 +740,19 @@
       if (!forceRefresh) { const cached = getCachedEmissions(); if (cached && cached.length > 0) { emissionsData = cached; renderEmissionsChart(); renderCirculatingChart(); renderAlignedChart(); return; } }
       loadingText.textContent = 'Fetching current block...';
       const currentBlock = await fetchCurrentBlockNumber();
-      if (!currentBlock || currentBlock < EMISSIONS_START_BLOCK) { loadingText.textContent = 'Could not connect to RPC'; return; }
+      if (!currentBlock || currentBlock < EMISSIONS_START_BLOCK) { 
+        loadingText.textContent = CUSTOM_RPC_URL.includes('20.81') ? 'Could not connect to RPC' : 'Emissions data requires local RPC (run locally for full features)'; 
+        return; 
+      }
+      
+      // Test if getMiningInfo is available
+      const testMiningInfo = await fetchMiningInfoAtBlock(currentBlock);
+      if (!testMiningInfo) {
+        loadingText.textContent = 'Mining info not available on public RPC. Run locally for emissions graphs.';
+        progressBar.style.width = '0%';
+        return;
+      }
+      
       document.getElementById('emissions-block-range').textContent = `Block range: ${EMISSIONS_START_BLOCK.toLocaleString()} → ${currentBlock.toLocaleString()}`;
       const totalBlocks = currentBlock - EMISSIONS_START_BLOCK, dataPoints = 50, stepSize = Math.floor(totalBlocks / dataPoints);
       emissionsData = [];
