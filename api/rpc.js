@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const RPC_URL = 'http://20.81.235.89:9200';
+  const RPC_URL = 'https://zone.bitquai.live';
 
   try {
     const response = await fetch(RPC_URL, {
