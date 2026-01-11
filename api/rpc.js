@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const RPC_URL = 'http://zone.bitquai.live';
+  const RPC_URL = 'https://zone.bitquai.live';
 
   try {
     const response = await fetch(RPC_URL, {
